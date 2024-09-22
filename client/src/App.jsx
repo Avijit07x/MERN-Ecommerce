@@ -1,19 +1,20 @@
-import { Button } from "./components/ui/button";
+import { Route, Routes } from "react-router-dom";
+import AuthLayout from "./components/auth/layout";
+import Login from "./routes/auth/Login";
+import Register from "./routes/auth/Register";
 
 const App = () => {
 	return (
 		<div>
-			<Button
-				onClick={() => {
-					console.log("clicked");
-				}}
-				variant="default"
-				size="sm"
-			>
-				Button
-			</Button>
+			<Routes>
+				<Route path="/auth" element={<AuthLayout />}>
+					<Route path="login" element={<Login />} />
+					<Route path="register" element={<Register />} />
+				</Route>
+			</Routes>
 		</div>
 	);
 };
 
 export default App;
+

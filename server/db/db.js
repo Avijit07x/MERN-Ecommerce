@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connection = {};
 
-const connectDB = async () => {
+const connectToDB = async () => {
 	try {
         
 		if (connection.isConnected) {
@@ -18,4 +18,4 @@ const connectDB = async () => {
 	}
 };
 
-module.exports = connectDB;
+module.exports = connectToDB;

@@ -1,10 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const connectDB = require("./db/db");
+const connectToDB = require("./db/db");
 
 // DB Connection
-connectDB();
+connectToDB();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -30,7 +30,6 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
 	res.status(200).json("Server is up & running");
 });
-
 
 // // Routes
 // app.use("/api/auth", require("./routes/auth"));

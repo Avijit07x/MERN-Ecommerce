@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-function AuthLayout() {
+const AuthLayout = () => {
 	return (
 		<div className="flex h-screen w-full">
 			<div className="hidden w-1/2 items-center justify-center bg-black px-12 lg:flex">
@@ -15,6 +15,6 @@ function AuthLayout() {
 			</div>
 		</div>
 	);
-}
+};
 
 export default AuthLayout;

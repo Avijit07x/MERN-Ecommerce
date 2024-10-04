@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 const Login = () => {
 	const { isLoading } = useSelector((state) => state.auth);
-	// const { toast } = useToast();
+
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const handleSubmit = (event) => {
@@ -30,7 +30,7 @@ const Login = () => {
 		dispatch(loginUser(urlencodedData)).then((data) => {
 			if (data.payload?.success) {
 				navigate("/");
-				// toasts({ title: data.payload?.message });
+
 				toast.success(data.payload?.message);
 			}
 

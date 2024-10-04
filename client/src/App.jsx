@@ -25,7 +25,11 @@ const App = () => {
 	);
 	const dispatch = useDispatch();
 	useEffect(() => {
-		dispatch(checkAuth());
+		try {
+			dispatch(checkAuth());
+		} catch (error) {
+			console.log(error);
+		}
 	}, [dispatch]);
 
 	if (isLoading) {

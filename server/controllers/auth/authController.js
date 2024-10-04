@@ -96,7 +96,8 @@ const loginUser = async (req, res) => {
 
 		const options = {
 			httpOnly: true,
-			secure: false,
+			secure: process.env.NODE_ENV === "production", // Ensure secure cookies in production
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Allow cross-site cookies in production
 		};
 
 		// Set cookie and return response

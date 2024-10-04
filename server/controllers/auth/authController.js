@@ -95,10 +95,8 @@ const loginUser = async (req, res) => {
 		};
 
 		const options = {
-			expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
 			httpOnly: true,
 			secure: true,
-			sameSite: "Lax",
 		};
 
 		// Set cookie and return response
@@ -123,10 +121,13 @@ const logoutUser = (req, res) => {
 // Middleware
 const authMiddleware = (req, res, next) => {
 	const token = req.cookies.token;
-	if (!token) {
-		return res.status(401).json({ success: false, message: "Unauthenticated" });
-	}
+
 	try {
+		if (!token) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Unauthenticated" });
+		}
 		const decoded = jwt.verify(token, process.env.TOKEN_KEY);
 
 		if (!decoded) {

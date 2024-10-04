@@ -96,8 +96,9 @@ const loginUser = async (req, res) => {
 
 		const options = {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production", // Ensure secure cookies in production
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Allow cross-site cookies in production
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			path: "/",
 		};
 
 		// Set cookie and return response
@@ -114,7 +115,12 @@ const loginUser = async (req, res) => {
 // logout
 const logoutUser = (req, res) => {
 	res
-		.clearCookie("token", { httpOnly: true, path: "/" })
+		.clearCookie("token", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			path: "/",
+		})
 		.status(200)
 		.json({ success: true, message: "User Logged Out" });
 };
@@ -127,18 +133,23 @@ const authMiddleware = (req, res, next) => {
 		if (!token) {
 			return res
 				.status(401)
-				.json({ success: false, message: "Unauthenticated" });
+				.json({ success: false, message: "Unauthenticated: No token" });
 		}
+
 		const decoded = jwt.verify(token, process.env.TOKEN_KEY);
 
 		if (!decoded) {
 			return res
 				.status(401)
-				.json({ success: false, message: "Unauthenticated" });
+				.json({ success: false, message: "Unauthenticated: Invalid token" });
 		}
+
 		req.user = decoded.user;
 		next();
 	} catch (error) {
+		if (error.name === "TokenExpiredError") {
+			return res.status(401).json({ success: false, message: "Token expired" });
+		}
 		return res.status(401).json({ success: false, message: "Unauthenticated" });
 	}
 };

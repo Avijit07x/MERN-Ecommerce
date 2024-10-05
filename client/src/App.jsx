@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/admin/Layout";
 import AuthLayout from "./components/auth/layout";
 import CheckAuth from "./components/check-auth/CheckAuth";
+import Loader from "./components/loader/Loader";
 import ShoppingLayout from "./components/shopping/Layout";
 import AdminDashboard from "./routes/admin/Dashboard";
 import AdminFeatures from "./routes/admin/Features";
@@ -33,7 +34,7 @@ const App = () => {
 	}, [dispatch]);
 
 	if (isLoading) {
-		return <div> Loading...</div>;
+		return <Loader />;
 	}
 
 	return (

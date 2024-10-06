@@ -12,14 +12,20 @@ const Header = ({ setOpen }) => {
 	}
 	return (
 		<header className="flex items-center justify-between border-b bg-background px-4 py-3">
-			<Button size="sm" onClick={() => setOpen(true)} className="sm:block lg:hidden bg-transparent">
+			<button
+				onClick={() => setOpen(true)}
+				className="bg-transparent sm:block lg:hidden"
+			>
 				<AlignJustify className="size-6 text-black" />
 				<span className="sr-only">Toggle Menu</span>
-			</Button>
+			</button>
 
 			<div className="flex flex-1 justify-end">
 				<form onSubmit={handleLogout}>
-					<Button size="sm" className="inline-flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium shadow">
+					<Button
+						size="sm"
+						className="inline-flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium shadow"
+					>
 						<LogOut className="size-5" />
 						Logout
 					</Button>

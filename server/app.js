@@ -3,6 +3,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const connectToDB = require("./db/db");
 const authRoute = require("./routes/auth/authRoute");
+const productRoute = require("./routes/admin/ProductRoute");
+const fileUpload = require("express-fileupload");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -24,7 +26,11 @@ app.use(
 		credentials: true,
 	})
 );
-
+app.use(
+	fileUpload({
+		useTempFiles: true,
+	})
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -35,6 +41,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/auth", authRoute);
+app.use("/api/admin/product", productRoute);
 
 app.listen(PORT, () => {
 	console.log("Server is running on port 8000");

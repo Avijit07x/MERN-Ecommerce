@@ -12,6 +12,8 @@ import { useState } from "react";
 const AdminProducts = () => {
 	const [openCreateProductsDialog, setOpenCreateProductsDialog] =
 		useState(false);
+	const [imageFile, setImageFile] = useState(null);
+	const [uploadedImageUrl, setUploadedImageUrl] = useState("");
 
 	return (
 		<>
@@ -27,10 +29,17 @@ const AdminProducts = () => {
 			>
 				<SheetContent side="right" className="overflow-auto">
 					<SheetHeader>
-						<SheetTitle>Add Product</SheetTitle>
+						<SheetTitle className="text-xl font-semibold">
+							Add Product
+						</SheetTitle>
 					</SheetHeader>
-					<ImageUpload />
-					<AddProductForm />
+					<ImageUpload
+						imageFile={imageFile}
+						setImageFile={setImageFile}
+						uploadedImageUrl={uploadedImageUrl}
+						setUploadedImageUrl={setUploadedImageUrl}
+					/>
+					<AddProductForm setImageFile={setImageFile} uploadedImageUrl={uploadedImageUrl} />
 				</SheetContent>
 			</Sheet>
 		</>

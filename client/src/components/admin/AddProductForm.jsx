@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -12,7 +14,7 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
-const AddProductForm = () => {
+const AddProductForm = ({ uploadedImageUrl, setImageFile }) => {
 	const [formData, setFormData] = useState({
 		title: "",
 		description: "",
@@ -20,7 +22,7 @@ const AddProductForm = () => {
 		brand: "",
 		price: "",
 		salePrice: "",
-		stock: "",
+		totalStock: "",
 	});
 
 	// Change handler
@@ -34,9 +36,33 @@ const AddProductForm = () => {
 	};
 
 	// Submit handler
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		console.log("Form Data:", formData);
+		const data = { image: { ...uploadedImageUrl }, ...formData };
+		try {
+			const res = await axios.post(
+				import.meta.env.VITE_SERVER_URL + "/admin/product/add-product",
+				data,
+			);
+
+			if (res.data.success) {
+				toast.success("Product added");
+
+				setFormData({
+					title: "",
+					description: "",
+					category: "",
+					brand: "",
+					price: "",
+					salePrice: "",
+					totalStock: "",
+				});
+
+				setImageFile(null);
+			}
+		} catch (error) {
+			console.log(error.response.data.message);
+		}
 	};
 
 	return (
@@ -145,12 +171,12 @@ const AddProductForm = () => {
 					<Label htmlFor="stock">Stock</Label>
 					<Input
 						id="stock"
-						name="stock"
+						name="totalStock"
 						type="number"
 						min="0"
 						placeholder="Enter Stock"
 						className="w-full"
-						value={formData.stock}
+						value={formData.totalStock}
 						onChange={handleChange}
 					/>
 				</div>

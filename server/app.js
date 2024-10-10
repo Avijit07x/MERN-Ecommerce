@@ -22,6 +22,7 @@ app.use(
 			"Authorization",
 			"cache-control",
 			"pragma",
+			"x-requested-with",
 		],
 		credentials: true,
 	})

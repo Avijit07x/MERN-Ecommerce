@@ -43,6 +43,9 @@ const AddProductForm = ({ uploadedImageUrl, setImageFile }) => {
 			const res = await axios.post(
 				import.meta.env.VITE_SERVER_URL + "/admin/product/add-product",
 				data,
+				{
+					withCredentials: true,
+				},
 			);
 
 			if (res.data.success) {

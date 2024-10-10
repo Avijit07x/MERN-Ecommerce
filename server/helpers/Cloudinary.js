@@ -8,11 +8,9 @@ cloudinary.config({
 	secure: true,
 });
 
-/*
 // multer config
 const storage = new multer.memoryStorage();
 const upload = multer({ storage });
-*/
 
 // upload image
 const ImageUploadUtil = async (image) => {
@@ -29,4 +27,4 @@ const ImageDeleteUtil = async (imgId) => {
 	return result;
 };
 
-module.exports = { ImageUploadUtil, ImageDeleteUtil };
+module.exports = { upload, ImageUploadUtil, ImageDeleteUtil };

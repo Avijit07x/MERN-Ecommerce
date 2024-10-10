@@ -1,5 +1,5 @@
 const express = require("express");
-// const { upload } = require("../../helpers/Cloudinary");
+const { upload } = require("../../helpers/Cloudinary");
 const {
 	handleImageUpload,
 	handleImageDelete,
@@ -8,7 +8,10 @@ const {
 
 const router = express.Router();
 
-router.post("/upload-image", handleImageUpload);
+router.post("/upload-image", upload.single("image"), handleImageUpload);
+router.get("/upload-image", (req, res) =>
+	res.status(200).json({ success: true })
+);
 router.post("/delete-image", handleImageDelete);
 router.post("/add-product", addProduct);
 

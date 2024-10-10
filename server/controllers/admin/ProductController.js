@@ -2,25 +2,16 @@ const {
 	ImageUploadUtil,
 	ImageDeleteUtil,
 } = require("../../helpers/Cloudinary");
-const fs = require("fs");
+
 const Product = require("../../models/Product");
 
 // upload image to cloudinary
 const handleImageUpload = async (req, res) => {
 	try {
-		/*
-		for multer
 		const b64 = Buffer.from(req.file.buffer).toString("base64");
 		const url = "data:" + req.file.mimetype + ";base64," + b64;
-		*/
 
-		const url = req.files.image;
-
-		const result = await ImageUploadUtil(url.tempFilePath);
-
-		if (result.url && result.public_id) {
-			fs.unlinkSync(url.tempFilePath);
-		}
+		const result = await ImageUploadUtil(url);
 
 		res.status(200).json({ success: true, result });
 	} catch (error) {

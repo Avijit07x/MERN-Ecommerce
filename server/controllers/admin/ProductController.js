@@ -18,8 +18,8 @@ const handleImageUpload = async (req, res) => {
 
 		const result = await ImageUploadUtil(url.tempFilePath);
 
-		if (result.url) {
-			fs.rmSync("./tmp", { recursive: true, force: true });
+		if (result.url && result.public_id) {
+			fs.unlinkSync(url.tempFilePath);
 		}
 
 		res.status(200).json({ success: true, result });

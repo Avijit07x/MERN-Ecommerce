@@ -2,8 +2,8 @@ const {
 	ImageUploadUtil,
 	ImageDeleteUtil,
 } = require("../../helpers/Cloudinary");
-
 const Product = require("../../models/Product");
+const redis = require("../../helpers/redis");
 
 // upload image to cloudinary
 const handleImageUpload = async (req, res) => {
@@ -41,6 +41,8 @@ const addProduct = async (req, res) => {
 	try {
 		const newProduct = new Product(data);
 		await newProduct.save();
+		const products = await Product.find({});
+		await redis.set("products", JSON.stringify(products), "EX", 60 * 60 * 24);
 		res.status(200).json({ success: true, message: "Product added" });
 	} catch (error) {
 		res.status(500).json({ success: false, message: "Something went wrong" });
@@ -49,12 +51,41 @@ const addProduct = async (req, res) => {
 
 // get all products
 const getProducts = async (req, res) => {
-	try {
-		const products = await Product.find({});
-		res.status(200).json({ success: true, products });
-	} catch (error) {
-		res.status(500).json({ success: false, message: "Something went wrong" });
-	}
+	// try {
+	// 	const productsFromDB = await Product.find({});
+		
+	// 	res.status(200).json({ success: true, products: productsFromDB });
+	// } catch (error) {
+	// 	res.status(500).json({ success: false, message: "Something went wrong" });
+	// }
+	redis.get("products", async (err, products) => {
+		if (err) {
+			return res.status(500).json({ success: false, message: "Redis error" });
+		}
+
+		// If products exist in cache, parse them and return
+		if (products) {
+			return res.status(200).json({
+				success: true,
+				products: JSON.parse(products),
+				message: "Products fetched from cache",
+			});
+		}
+
+		// If products not found in cache, fetch from database
+		try {
+			const productsFromDB = await Product.find({});
+			await redis.set(
+				"products",
+				JSON.stringify(productsFromDB),
+				"EX",
+				60 * 60 * 24
+			);
+			res.status(200).json({ success: true, products: productsFromDB });
+		} catch (error) {
+			res.status(500).json({ success: false, message: "Something went wrong" });
+		}
+	});
 };
 
 // update product
@@ -112,11 +143,14 @@ const deleteProduct = async (req, res) => {
 		}
 
 		// delete image from cloudinary
-
 		await ImageDeleteUtil(findProduct.image.public_id);
 
 		// delete product
 		await Product.findByIdAndDelete(id);
+
+		// delete specific product from cache
+		await redis.del("products", id);
+
 		res.status(200).json({ success: true, message: "Product deleted" });
 	} catch (error) {
 		res.status(500).json({ success: false, message: "Something went wrong" });

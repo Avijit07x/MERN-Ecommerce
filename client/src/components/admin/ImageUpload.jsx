@@ -34,7 +34,7 @@ const ImageUpload = ({
 	};
 
 	// upload image to cloudinary
-	async function uploadImageToCloudinary() {
+	const uploadImageToCloudinary = async () => {
 		setIsLoading(true);
 		try {
 			const data = new FormData();
@@ -54,10 +54,10 @@ const ImageUpload = ({
 		} catch (error) {
 			console.error(error.response.data);
 		}
-	}
+	};
 
 	// delete image from cloudinary
-	async function deleteImageFromCloudinary() {
+	const deleteImageFromCloudinary = async () => {
 		try {
 			const response = await axios.post(
 				import.meta.env.VITE_SERVER_URL + "/admin/product/delete-image",
@@ -74,7 +74,7 @@ const ImageUpload = ({
 		} catch (error) {
 			console.error(error.response.data);
 		}
-	}
+	};
 
 	useEffect(() => {
 		if (imageFile !== null && uploadedImageUrl === "")
@@ -117,7 +117,9 @@ const ImageUpload = ({
 							<div className="flex items-center">
 								<FileIcon className="size-7 text-primary" />
 							</div>
-							<p className="text-sm font-medium line-clamp-1">{imageFile.name}</p>
+							<p className="line-clamp-1 text-sm font-medium">
+								{imageFile.name}
+							</p>
 						</div>
 
 						<div className="flex items-center gap-3">

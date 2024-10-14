@@ -11,13 +11,14 @@ const ProductTile = ({
 	return (
 		<Card className="mx-auto w-full max-w-sm">
 			<div>
-				<div className="relative">
+				<div className="relative h-[300px] w-full overflow-hidden">
 					<img
 						src={product?.image.url}
 						alt={product?.title}
-						className="h-[300px] w-full rounded-t-lg object-cover"
+						className="absolute h-full w-full transform rounded-t-lg object-cover transition-transform duration-300  hover:scale-110 hover:cursor-pointer"
 					/>
 				</div>
+
 				<CardContent className="p-5">
 					<h2 className="my-2 line-clamp-1 font-semibold">{product?.title}</h2>
 					<div className="my-2 flex items-center justify-between">

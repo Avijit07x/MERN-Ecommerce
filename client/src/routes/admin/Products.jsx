@@ -1,6 +1,7 @@
 import AddProductForm from "@/components/admin/AddProductForm";
 import ImageUpload from "@/components/admin/ImageUpload";
 import ProductTile from "@/components/admin/ProductTile";
+import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
 import {
 	Sheet,
@@ -28,10 +29,10 @@ const AdminProducts = () => {
 		salePrice: "",
 		totalStock: "",
 	});
-	
-	const { products } = useSelector((state) => state.adminProduct);
+
+	const { products, isLoading } = useSelector((state) => state.adminProduct);
 	const dispatch = useDispatch();
-	
+
 	// get all products
 	useEffect(() => {
 		dispatch(getProducts());
@@ -59,18 +60,23 @@ const AdminProducts = () => {
 					Add Product
 				</Button>
 			</div>
-			<div className="grid w-full gap-4 md:grid-cols-3 lg:grid-cols-4">
-				{products?.map((product) => (
-					<ProductTile
-						key={product?._id}
-						product={product}
-						setOpenCreateProductsDialog={setOpenCreateProductsDialog}
-						handleDelete={handleDelete}
-						setFormData={setFormData}
-						setCurrentEditedId={setCurrentEditedId}
-					/>
-				))}
-			</div>
+			{isLoading ? (
+				<Loader />
+			) : (
+				<div className="grid w-full gap-4 md:grid-cols-3 lg:grid-cols-4">
+					{products?.map((product) => (
+						<ProductTile
+							key={product?._id}
+							product={product}
+							setOpenCreateProductsDialog={setOpenCreateProductsDialog}
+							handleDelete={handleDelete}
+							setFormData={setFormData}
+							setCurrentEditedId={setCurrentEditedId}
+						/>
+					))}
+				</div>
+			)}
+
 			<Sheet
 				open={openCreateProductsDialog}
 				onOpenChange={setOpenCreateProductsDialog}
@@ -93,6 +99,7 @@ const AdminProducts = () => {
 						setOpenCreateProductsDialog={setOpenCreateProductsDialog}
 						formData={formData}
 						setFormData={setFormData}
+						currentEditedId={currentEditedId}
 					/>
 				</SheetContent>
 			</Sheet>

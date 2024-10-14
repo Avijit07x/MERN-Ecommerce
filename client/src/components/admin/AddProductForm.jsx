@@ -20,6 +20,7 @@ const AddProductForm = ({
 	setOpenCreateProductsDialog,
 	setFormData,
 	formData,
+	currentEditedId,
 }) => {
 	const dispatch = useDispatch();
 
@@ -190,7 +191,7 @@ const AddProductForm = ({
 
 				<div>
 					<Button type="submit" className="mt-2 w-full">
-						Add Product
+						{currentEditedId ? "Update Product" : "Add Product"}
 					</Button>
 				</div>
 			</form>

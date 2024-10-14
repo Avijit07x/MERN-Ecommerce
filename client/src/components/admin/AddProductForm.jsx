@@ -1,5 +1,5 @@
-import axios from "axios";
-import { useState } from "react";
+import { addProduct, getProducts } from "@/store/admin/productSlice";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -14,16 +14,14 @@ import {
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
-const AddProductForm = ({ uploadedImageUrl, setImageFile }) => {
-	const [formData, setFormData] = useState({
-		title: "",
-		description: "",
-		category: "",
-		brand: "",
-		price: "",
-		salePrice: "",
-		totalStock: "",
-	});
+const AddProductForm = ({
+	uploadedImageUrl,
+	setImageFile,
+	setOpenCreateProductsDialog,
+	setFormData,
+	formData,
+}) => {
+	const dispatch = useDispatch();
 
 	// Change handler
 	const handleChange = (e) => {
@@ -36,21 +34,25 @@ const AddProductForm = ({ uploadedImageUrl, setImageFile }) => {
 	};
 
 	// Submit handler
-	const handleSubmit = async (e) => {
+	const handleSubmit = (e) => {
 		e.preventDefault();
 		const data = { image: { ...uploadedImageUrl }, ...formData };
-		try {
-			const res = await axios.post(
-				import.meta.env.VITE_SERVER_URL + "/admin/product/add-product",
-				data,
-				{
-					withCredentials: true,
-				},
-			);
+		if (
+			!data.image.url ||
+			!data.title ||
+			!data.description ||
+			!data.category ||
+			!data.brand ||
+			!data.price ||
+			!data.salePrice ||
+			!data.totalStock
+		) {
+			toast.error("Please fill all the fields");
+			return;
+		}
 
-			if (res.data.success) {
-				toast.success("Product added");
-
+		dispatch(addProduct(data)).then((res) => {
+			if (res.payload?.success) {
 				setFormData({
 					title: "",
 					description: "",
@@ -60,12 +62,12 @@ const AddProductForm = ({ uploadedImageUrl, setImageFile }) => {
 					salePrice: "",
 					totalStock: "",
 				});
-
+				dispatch(getProducts());
 				setImageFile(null);
+				setOpenCreateProductsDialog(false);
+				toast.success(res.payload?.message);
 			}
-		} catch (error) {
-			console.log(error.response.data.message);
-		}
+		});
 	};
 
 	return (
@@ -100,6 +102,7 @@ const AddProductForm = ({ uploadedImageUrl, setImageFile }) => {
 				<div className="space-y-2">
 					<Label htmlFor="category">Category</Label>
 					<Select
+						value={formData.category}
 						onValueChange={(value) =>
 							setFormData((prevData) => ({ ...prevData, category: value }))
 						}
@@ -122,6 +125,7 @@ const AddProductForm = ({ uploadedImageUrl, setImageFile }) => {
 				<div className="space-y-2">
 					<Label htmlFor="brand">Brand</Label>
 					<Select
+						value={formData.brand}
 						onValueChange={(value) =>
 							setFormData((prevData) => ({ ...prevData, brand: value }))
 						}

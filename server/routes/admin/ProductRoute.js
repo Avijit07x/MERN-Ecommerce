@@ -4,15 +4,18 @@ const {
 	handleImageUpload,
 	handleImageDelete,
 	addProduct,
+	getProducts,
+	deleteProduct,
+	updateProduct,
 } = require("../../controllers/admin/ProductController");
 
 const router = express.Router();
 
 router.post("/upload-image", upload.single("image"), handleImageUpload);
-router.get("/upload-image", (req, res) =>
-	res.status(200).json({ success: true })
-);
 router.post("/delete-image", handleImageDelete);
 router.post("/add-product", addProduct);
+router.get("/get-products", getProducts);
+router.post("/delete-product/:id", deleteProduct);
+router.post("/update-product", updateProduct);
 
 module.exports = router;

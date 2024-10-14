@@ -117,7 +117,7 @@ const ImageUpload = ({
 							<div className="flex items-center">
 								<FileIcon className="size-7 text-primary" />
 							</div>
-							<p className="text-sm font-medium">{imageFile.name}</p>
+							<p className="text-sm font-medium line-clamp-1">{imageFile.name}</p>
 						</div>
 
 						<div className="flex items-center gap-3">

@@ -45,6 +45,7 @@ const AdminProducts = () => {
 			dispatch(deleteProduct(productId)).then((res) => {
 				if (res.payload?.success) {
 					dispatch(getProducts());
+
 					toast.success(res.payload?.message);
 				} else {
 					toast.error(res.payload?.message);

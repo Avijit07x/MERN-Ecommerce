@@ -3,12 +3,12 @@ const {
 	ImageDeleteUtil,
 } = require("../../helpers/Cloudinary");
 const Product = require("../../models/Product");
-const redis = require("../../helpers/redis");
 
 // upload image to cloudinary
 const handleImageUpload = async (req, res) => {
 	try {
 		const b64 = Buffer.from(req.file.buffer).toString("base64");
+
 		const url = "data:" + req.file.mimetype + ";base64," + b64;
 
 		const result = await ImageUploadUtil(url);
@@ -33,6 +33,7 @@ const handleImageDelete = async (req, res) => {
 // add a new product
 const addProduct = async (req, res) => {
 	const data = req.body;
+
 	if (!data) {
 		return res
 			.status(400)
@@ -41,8 +42,6 @@ const addProduct = async (req, res) => {
 	try {
 		const newProduct = new Product(data);
 		await newProduct.save();
-		const products = await Product.find({});
-		await redis.set("products", JSON.stringify(products), "EX", 60 * 60 * 24);
 		res.status(200).json({ success: true, message: "Product added" });
 	} catch (error) {
 		res.status(500).json({ success: false, message: "Something went wrong" });
@@ -50,48 +49,27 @@ const addProduct = async (req, res) => {
 };
 
 // get all products
+
 const getProducts = async (req, res) => {
-	// try {
-	// 	const productsFromDB = await Product.find({});
-		
-	// 	res.status(200).json({ success: true, products: productsFromDB });
-	// } catch (error) {
-	// 	res.status(500).json({ success: false, message: "Something went wrong" });
-	// }
-	redis.get("products", async (err, products) => {
-		if (err) {
-			return res.status(500).json({ success: false, message: "Redis error" });
-		}
+	try {
+		// If not found in cache, fetch from the database
+		const productsFromDB = await Product.find({});
 
-		// If products exist in cache, parse them and return
-		if (products) {
-			return res.status(200).json({
-				success: true,
-				products: JSON.parse(products),
-				message: "Products fetched from cache",
-			});
-		}
-
-		// If products not found in cache, fetch from database
-		try {
-			const productsFromDB = await Product.find({});
-			await redis.set(
-				"products",
-				JSON.stringify(productsFromDB),
-				"EX",
-				60 * 60 * 24
-			);
-			res.status(200).json({ success: true, products: productsFromDB });
-		} catch (error) {
-			res.status(500).json({ success: false, message: "Something went wrong" });
-		}
-	});
+		// Send response with products fetched from the database
+		return res.status(200).json({ success: true, products: productsFromDB });
+	} catch (err) {
+		return res
+			.status(500)
+			.json({ success: false, message: "Something went wrong" });
+	}
 };
 
 // update product
 const updateProduct = async (req, res) => {
+	const { formData } = req.body;
+
 	const {
-		id,
+		_id,
 		title,
 		description,
 		category,
@@ -99,15 +77,23 @@ const updateProduct = async (req, res) => {
 		price,
 		salePrice,
 		totalStock,
-	} = req.body;
+		image,
+		updatedImage,
+	} = formData;
+
 	try {
-		const findProduct = await Product.findById(id);
+		const findProduct = await Product.findById(_id);
+
 		if (!findProduct) {
 			return res
 				.status(400)
 				.json({ success: false, message: "Product not found" });
 		}
+		if (image?.url && updatedImage?.url) {
+			await ImageDeleteUtil(image.public_id);
+		}
 
+		findProduct.image = updatedImage?.url ? updatedImage : findProduct.image;
 		findProduct.title = title || findProduct.title;
 		findProduct.description = description || findProduct.description;
 		findProduct.category = category || findProduct.category;
@@ -147,9 +133,6 @@ const deleteProduct = async (req, res) => {
 
 		// delete product
 		await Product.findByIdAndDelete(id);
-
-		// delete specific product from cache
-		await redis.del("products", id);
 
 		res.status(200).json({ success: true, message: "Product deleted" });
 	} catch (error) {

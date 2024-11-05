@@ -1,4 +1,8 @@
-import { addProduct, getProducts } from "@/store/admin/productSlice";
+import {
+	addProduct,
+	getProducts,
+	updateProduct,
+} from "@/store/admin/productSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
@@ -71,9 +75,27 @@ const AddProductForm = ({
 		});
 	};
 
+	// Update handler
+	const handleUpdate = (e) => {
+		e.preventDefault();
+		const data = { updatedImage: { ...uploadedImageUrl }, ...formData };
+
+		dispatch(updateProduct(data)).then((res) => {
+			if (res.payload?.success) {
+				dispatch(getProducts());
+				setImageFile(null);
+				setOpenCreateProductsDialog(false);
+				toast.success(res.payload?.message);
+			}
+		});
+	};
+
 	return (
 		<div className="mt-4">
-			<form onSubmit={handleSubmit} className="space-y-2">
+			<form
+				onSubmit={currentEditedId ? handleUpdate : handleSubmit}
+				className="space-y-2"
+			>
 				<div className="space-y-2">
 					<Label htmlFor="title">Title</Label>
 					<Input

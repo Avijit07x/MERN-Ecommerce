@@ -68,7 +68,7 @@ const loginUser = async (req, res) => {
 		}
 
 		// create token
-		const token = jwt.sign(
+		const accessToken = jwt.sign(
 			{
 				user: {
 					email: existingUser.email,
@@ -83,7 +83,7 @@ const loginUser = async (req, res) => {
 			}
 		);
 
-		existingUser.token = token;
+		existingUser.token = accessToken;
 
 		// save to db with token
 		await existingUser.save();
@@ -97,12 +97,10 @@ const loginUser = async (req, res) => {
 		const options = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			path: "/",
 		};
 
 		// Set cookie and return response
-		return res.status(200).cookie("token", token, options).json({
+		return res.status(200).cookie("accessToken", accessToken, options).json({
 			success: true,
 			user,
 			message: "Login successful",
@@ -115,7 +113,7 @@ const loginUser = async (req, res) => {
 // logout
 const logoutUser = (req, res) => {
 	res
-		.clearCookie("token", {
+		.clearCookie("accessToken", {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -126,8 +124,8 @@ const logoutUser = (req, res) => {
 };
 
 // Middleware
-const authMiddleware = (req, res, next) => {
-	const token = req.cookies.token;
+const authMiddleware = async (req, res, next) => {
+	const token = req.cookies.accessToken;
 
 	try {
 		if (!token) {
@@ -144,7 +142,28 @@ const authMiddleware = (req, res, next) => {
 				.json({ success: false, message: "Unauthenticated: Invalid token" });
 		}
 
+		if (!decoded.user) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Unauthenticated: Invalid token" });
+		}
+
+		if (!decoded.user.id) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Unauthenticated: Invalid token" });
+		}
+
+		const user = await User.findById(decoded.user.id);
+
+		if (!user) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Unauthenticated: Invalid user" });
+		}
+
 		req.user = decoded.user;
+
 		next();
 	} catch (error) {
 		if (error.name === "TokenExpiredError") {

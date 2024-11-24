@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const connectToDB = require("./db/db");
 const authRoute = require("./routes/auth/authRoute");
@@ -31,13 +32,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-	res.status(200).json("Server is up & running");
-});
-
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/admin/product", productRoute);
+
+app.get("/", (req, res) => {
+	res.status(200).json("Server is up & running");
+});
 
 app.listen(PORT, () => {
 	console.log("Server is running on port 8000");

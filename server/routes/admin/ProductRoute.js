@@ -11,7 +11,12 @@ const {
 
 const router = express.Router();
 
-router.post("/upload-image", upload.single("image"), handleImageUpload);
+router.post(
+	"/upload-image",
+
+	upload.single("image"),
+	handleImageUpload
+);
 router.post("/delete-image", handleImageDelete);
 router.post("/add-product", addProduct);
 router.get("/get-products", getProducts);

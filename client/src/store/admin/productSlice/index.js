@@ -13,6 +13,7 @@ export const getProducts = createAsyncThunk("/getProducts", async () => {
 		const res = await axios.get(
 			import.meta.env.VITE_SERVER_URL + "/admin/product/get-products",
 			{
+				withCredentials: true,
 				headers: {
 					"Content-Type": "application/json",
 				},
@@ -34,6 +35,7 @@ export const addProduct = createAsyncThunk(
 				import.meta.env.VITE_SERVER_URL + "/admin/product/add-product",
 				data,
 				{
+					withCredentials: true,
 					headers: {
 						"Content-Type": "application/json",
 					},
@@ -56,6 +58,13 @@ export const deleteProduct = createAsyncThunk(
 			const res = await axios.post(
 				import.meta.env.VITE_SERVER_URL +
 					`/admin/product/delete-product/${productId}`,
+				{},
+				{
+					withCredentials: true,
+					headers: {
+						"Content-Type": "application/json",
+					},
+				},
 			);
 			return res?.data;
 		} catch (error) {
@@ -73,6 +82,7 @@ export const updateProduct = createAsyncThunk(
 				import.meta.env.VITE_SERVER_URL + "/admin/product/update-product",
 				{ formData },
 				{
+					withCredentials: true,
 					headers: {
 						"Content-Type": "application/json",
 					},

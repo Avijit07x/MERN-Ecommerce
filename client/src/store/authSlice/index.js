@@ -37,6 +37,7 @@ export const loginUser = createAsyncThunk(
 				formData,
 				{
 					withCredentials: true,
+					
 				},
 			);
 

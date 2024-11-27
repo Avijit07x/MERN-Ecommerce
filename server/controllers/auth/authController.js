@@ -67,32 +67,38 @@ const loginUser = async (req, res) => {
 			return res.json({ success: false, message: "Incorrect password" });
 		}
 
-		// create token
-		const accessToken = jwt.sign(
-			{
-				user: {
-					email: existingUser.email,
-					role: existingUser.role,
-					id: existingUser._id,
-					username: existingUser.username,
-				},
-			},
-			process.env.TOKEN_KEY,
-			{
-				expiresIn: "2h",
-			}
-		);
-
-		existingUser.token = accessToken;
-
-		// save to db with token
-		await existingUser.save();
-
 		const user = {
 			id: existingUser._id,
 			email: existingUser.email,
 			role: existingUser.role,
+			username: existingUser.username,
 		};
+		// create access token
+		const accessToken = jwt.sign(
+			{
+				user,
+			},
+			process.env.TOKEN_KEY,
+			{
+				expiresIn: process.env.TOKEN_KEY_EXPIRY,
+			}
+		);
+		// crate refresh token
+		const refreshToken = jwt.sign(
+			{
+				user,
+			},
+			process.env.REFRESH_TOKEN_KEY,
+			{
+				expiresIn: process.env.REFRESH_TOKEN_KEY_EXPIRY,
+			}
+		);
+
+		// store refresh token
+		existingUser.refreshToken = refreshToken;
+
+		// save to db with token
+		await existingUser.save();
 
 		const options = {
 			httpOnly: true,
@@ -101,11 +107,15 @@ const loginUser = async (req, res) => {
 		};
 
 		// Set cookie and return response
-		return res.status(200).cookie("accessToken", accessToken, options).json({
-			success: true,
-			user,
-			message: "Login successful",
-		});
+		return res
+			.status(200)
+			.cookie("accessToken", accessToken, options)
+			.cookie("refreshToken", refreshToken, options)
+			.json({
+				success: true,
+				user,
+				message: "Login successful",
+			});
 	} catch (error) {
 		return res.status(500).json({ success: false, message: error.message });
 	}
@@ -120,6 +130,12 @@ const logoutUser = (req, res) => {
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 			path: "/",
 		})
+		.clearCookie("refreshToken", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			path: "/",
+		})
 		.status(200)
 		.json({ success: true, message: "User Logged Out" });
 };
@@ -127,29 +143,16 @@ const logoutUser = (req, res) => {
 // Middleware
 const authMiddleware = async (req, res, next) => {
 	const token = req.cookies.accessToken;
-
+	const refreshToken = req.cookies.refreshToken;
+	if (!token && !refreshToken) {
+		return res
+			.status(401)
+			.json({ success: false, message: "Unauthenticated: No token" });
+	}
 	try {
-		if (!token) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Unauthenticated: No token" });
-		}
-
 		const decoded = jwt.verify(token, process.env.TOKEN_KEY);
 
 		if (!decoded) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Unauthenticated: Invalid token" });
-		}
-
-		if (!decoded.user) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Unauthenticated: Invalid token" });
-		}
-
-		if (!decoded.user.id) {
 			return res
 				.status(401)
 				.json({ success: false, message: "Unauthenticated: Invalid token" });
@@ -168,15 +171,92 @@ const authMiddleware = async (req, res, next) => {
 		next();
 	} catch (error) {
 		if (error.name === "TokenExpiredError") {
-			return res.status(401).json({ success: false, message: "Token expired" });
+			return res.status(403).json({ success: false, message: "Token expired" });
 		}
 		return res.status(401).json({ success: false, message: "Unauthenticated" });
 	}
 };
 
+// refresh token
+const refreshTokenController = async (req, res) => {
+	const refreshToken = req.cookies.refreshToken;
+
+	if (!refreshToken) {
+		return res
+			.status(401)
+			.json({ success: false, message: "No refresh token" });
+	}
+	try {
+		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
+
+		if (!decoded) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Invalid refresh token" });
+		}
+		const existingUser = await User.findById(decoded.user.id);
+
+		if (!existingUser) {
+			return res
+				.status(401)
+				.json({ success: false, message: "User not found" });
+		}
+
+		if (refreshToken !== existingUser.refreshToken) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Refresh token does not match" });
+		}
+
+		const user = {
+			id: existingUser._id,
+			email: existingUser.email,
+			role: existingUser.role,
+			username: existingUser.username,
+		};
+
+		// create access token
+		const accessToken = jwt.sign(
+			{
+				user,
+			},
+			process.env.TOKEN_KEY,
+			{
+				expiresIn: process.env.TOKEN_KEY_EXPIRY,
+			}
+		);
+		// create refresh token
+		const newRefreshToken = jwt.sign(
+			{
+				user,
+			},
+			process.env.REFRESH_TOKEN_KEY,
+			{
+				expiresIn: process.env.REFRESH_TOKEN_KEY_EXPIRY,
+			}
+		);
+		const options = {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+		};
+		// update refresh token
+		existingUser.refreshToken = newRefreshToken;
+		await existingUser.save();
+
+		return res
+			.status(200)
+			.cookie("accessToken", accessToken, options)
+			.cookie("refreshToken", newRefreshToken, options)
+			.json({ success: true, message: "Token refreshed", user });
+	} catch (error) {
+		return res.status(401).json({ success: false, message: "Unauthenticated" });
+	}
+};
 module.exports = {
 	registerUser,
 	loginUser,
 	logoutUser,
 	authMiddleware,
+	refreshTokenController,
 };

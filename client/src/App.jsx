@@ -18,19 +18,22 @@ import ShoppingCheckout from "./routes/shopping/Checkout";
 import SHoppingHome from "./routes/shopping/Home";
 import ShoppingListing from "./routes/shopping/Listing";
 import UnAuth from "./routes/unauth/UnAuth";
-import { checkAuth } from "./store/authSlice";
+import { checkAuth, refreshToken } from "./store/authSlice";
 
 const App = () => {
 	const { isAuthenticated, currentUser, isLoading } = useSelector(
 		(state) => state.auth,
 	);
 	const dispatch = useDispatch();
-	useEffect(() => {
-		try {
-			dispatch(checkAuth());
-		} catch (error) {
-			console.log(error);
+	const authCheck = async () => {
+		const result = await dispatch(checkAuth());
+		if (result?.payload === 403) {
+			dispatch(refreshToken());
 		}
+	};
+
+	useEffect(() => {
+		authCheck();
 	}, [dispatch]);
 
 	if (isLoading) {

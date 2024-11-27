@@ -37,7 +37,6 @@ export const loginUser = createAsyncThunk(
 				formData,
 				{
 					withCredentials: true,
-					
 				},
 			);
 
@@ -66,6 +65,20 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
 	}
 });
 
+export const refreshToken = createAsyncThunk("auth/refreshToken", async () => {
+	try {
+		const res = await axios.get(
+			import.meta.env.VITE_SERVER_URL + "/auth/refresh-token",
+			{
+				withCredentials: true,
+			},
+		);
+		const result = res.data;
+		return result;
+	} catch (error) {
+		return error.response.data;
+	}
+});
 export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
 	try {
 		const res = await axios.get(
@@ -83,6 +96,9 @@ export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
 		const result = res.data;
 		return result;
 	} catch (error) {
+		if (error.response.status === 403) {
+			return error.response.status;
+		}
 		return error.response.data;
 	}
 });
@@ -142,7 +158,25 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.currentUser = null;
 			})
-			.addCase(logoutUser.fulfilled, (state, action) => {
+			.addCase(refreshToken.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(refreshToken.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.currentUser = action.payload?.success
+					? action.payload?.user
+					: null;
+				state.isAuthenticated = action.payload?.success;
+			})
+			.addCase(refreshToken.rejected, (state) => {
+				state.isAuthenticated = false;
+				state.isLoading = false;
+				state.currentUser = null;
+			})
+			.addCase(logoutUser.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(logoutUser.fulfilled, (state) => {
 				state.isLoading = false;
 				state.user = null;
 				state.isAuthenticated = false;

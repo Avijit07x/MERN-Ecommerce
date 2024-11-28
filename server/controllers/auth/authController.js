@@ -84,7 +84,7 @@ const loginUser = async (req, res) => {
 			}
 		);
 		// crate refresh token
-		const refreshToken = jwt.sign(
+		const e_refresh_token = jwt.sign(
 			{
 				user,
 			},
@@ -95,7 +95,7 @@ const loginUser = async (req, res) => {
 		);
 
 		// store refresh token
-		existingUser.refreshToken = refreshToken;
+		existingUser.e_refresh_token = e_refresh_token;
 
 		// save to db with token
 		await existingUser.save();
@@ -110,7 +110,7 @@ const loginUser = async (req, res) => {
 		return res
 			.status(200)
 			.cookie("accessToken", accessToken, options)
-			.cookie("refreshToken", refreshToken, options)
+			.cookie("e_refresh_token", e_refresh_token, options)
 			.json({
 				success: true,
 				user,
@@ -130,7 +130,7 @@ const logoutUser = (req, res) => {
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 			path: "/",
 		})
-		.clearCookie("refreshToken", {
+		.clearCookie("e_refresh_token", {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -143,8 +143,8 @@ const logoutUser = (req, res) => {
 // Middleware
 const authMiddleware = async (req, res, next) => {
 	const token = req.cookies.accessToken;
-	const refreshToken = req.cookies.refreshToken;
-	if (!token && !refreshToken) {
+	const e_refresh_token = req.cookies.e_refresh_token;
+	if (!token && !e_refresh_token) {
 		return res
 			.status(401)
 			.json({ success: false, message: "Unauthenticated: No token" });
@@ -179,15 +179,15 @@ const authMiddleware = async (req, res, next) => {
 
 // refresh token
 const refreshTokenController = async (req, res) => {
-	const refreshToken = req.cookies.refreshToken;
+	const e_refresh_token = req.cookies.e_refresh_token;
 
-	if (!refreshToken) {
+	if (!e_refresh_token) {
 		return res
 			.status(401)
 			.json({ success: false, message: "No refresh token" });
 	}
 	try {
-		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
+		const decoded = jwt.verify(e_refresh_token, process.env.REFRESH_TOKEN_KEY);
 
 		if (!decoded) {
 			return res
@@ -202,7 +202,7 @@ const refreshTokenController = async (req, res) => {
 				.json({ success: false, message: "User not found" });
 		}
 
-		if (refreshToken !== existingUser.refreshToken) {
+		if (e_refresh_token !== existingUser.e_refresh_token) {
 			return res
 				.status(401)
 				.json({ success: false, message: "Refresh token does not match" });
@@ -236,7 +236,7 @@ const refreshTokenController = async (req, res) => {
 			}
 		);
 		// update refresh token
-		existingUser.refreshToken = newRefreshToken;
+		existingUser.e_refresh_token = newRefreshToken;
 		const updatedUser = await existingUser.save();
 
 		if (!updatedUser) {
@@ -254,7 +254,7 @@ const refreshTokenController = async (req, res) => {
 		return res
 			.status(200)
 			.cookie("accessToken", accessToken, options)
-			.cookie("refreshToken", newRefreshToken, options)
+			.cookie("e_refresh_token", newRefreshToken, options)
 			.json({ success: true, message: "Token refreshed", user });
 	} catch (error) {
 		return res.status(401).json({ success: false, message: "Unauthenticated" });

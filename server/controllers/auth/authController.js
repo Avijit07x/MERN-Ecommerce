@@ -236,7 +236,7 @@ const refreshTokenController = async (req, res) => {
 			}
 		);
 		// update refresh token
-		existingUser.e_refresh_token = newRefreshToken;
+		existingUser.refreshToken = newRefreshToken;
 		const updatedUser = await existingUser.save();
 
 		if (!updatedUser) {

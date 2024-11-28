@@ -235,14 +235,21 @@ const refreshTokenController = async (req, res) => {
 				expiresIn: process.env.REFRESH_TOKEN_KEY_EXPIRY,
 			}
 		);
+		// update refresh token
+		existingUser.refreshToken = newRefreshToken;
+		const updatedUser = await existingUser.save();
+
+		if (!updatedUser) {
+			return res
+				.status(500)
+				.json({ success: false, message: "Error updating refresh token" });
+		}
+
 		const options = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 		};
-		// update refresh token
-		existingUser.refreshToken = newRefreshToken;
-		await existingUser.save();
 
 		return res
 			.status(200)

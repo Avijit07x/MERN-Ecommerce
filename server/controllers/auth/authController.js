@@ -94,12 +94,10 @@ const loginUser = async (req, res) => {
 		);
 
 		try {
-			existingUser.refreshToken = refreshToken; // Set refresh token
-			console.log("Saving refresh token...");
-			await existingUser.save(); // Save user document
-			console.log("Refresh token saved successfully.");
+			existingUser.refreshToken = refreshToken;
+
+			await existingUser.save();
 		} catch (err) {
-			console.error("Error saving refresh token:", err.message);
 			return res
 				.status(500)
 				.json({ success: false, message: "Database update failed" });
@@ -240,14 +238,14 @@ const refreshTokenController = async (req, res) => {
 				expiresIn: process.env.REFRESH_TOKEN_KEY_EXPIRY,
 			}
 		);
-		// update refresh token
-		existingUser.refreshToken = newRefreshToken;
-		const updatedUser = await existingUser.save();
 
-		if (!updatedUser) {
+		try {
+			existingUser.refreshToken = refreshToken;
+			await existingUser.save();
+		} catch (err) {
 			return res
 				.status(500)
-				.json({ success: false, message: "Error updating refresh token" });
+				.json({ success: false, message: "Database update failed" });
 		}
 
 		const options = {

@@ -239,14 +239,9 @@ const refreshTokenController = async (req, res) => {
 			}
 		);
 
-		try {
-			existingUser.refreshToken = refreshToken;
-			await existingUser.save();
-		} catch (err) {
-			return res
-				.status(500)
-				.json({ success: false, message: "Database update failed" });
-		}
+		// update refresh token
+		existingUser.refreshToken = refreshToken;
+		await existingUser.save();
 
 		const options = {
 			httpOnly: true,

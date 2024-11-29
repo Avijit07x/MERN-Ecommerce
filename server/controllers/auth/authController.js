@@ -47,15 +47,14 @@ const registerUser = async (req, res) => {
 // login controller
 const loginUser = async (req, res) => {
 	const { email, password } = req.body;
-
+	if (!(email && password)) {
+		return res.json({ success: false, message: "All fields are required" });
+	}
 	try {
-		if (!(email && password)) {
-			return res.json({ success: false, message: "All fields are required" });
-		}
 		const existingUser = await User.findOne({ email });
 
 		if (!existingUser) {
-			return res.json({ success: false, message: "User not exits" });
+			return res.json({ success: false, message: "User not found" });
 		}
 		// Check password
 		const isPasswordCorrect = await bcrypt.compare(
@@ -84,7 +83,7 @@ const loginUser = async (req, res) => {
 			}
 		);
 		// crate refresh token
-		const e_refresh_token = jwt.sign(
+		const refreshToken = jwt.sign(
 			{
 				user,
 			},
@@ -94,11 +93,17 @@ const loginUser = async (req, res) => {
 			}
 		);
 
-		// store refresh token
-		existingUser.e_refresh_token = e_refresh_token;
-
-		// save to db with token
-		await existingUser.save();
+		try {
+			existingUser.refreshToken = refreshToken; // Set refresh token
+			console.log("Saving refresh token...");
+			await existingUser.save(); // Save user document
+			console.log("Refresh token saved successfully.");
+		} catch (err) {
+			console.error("Error saving refresh token:", err.message);
+			return res
+				.status(500)
+				.json({ success: false, message: "Database update failed" });
+		}
 
 		const options = {
 			httpOnly: true,
@@ -110,7 +115,7 @@ const loginUser = async (req, res) => {
 		return res
 			.status(200)
 			.cookie("accessToken", accessToken, options)
-			.cookie("e_refresh_token", e_refresh_token, options)
+			.cookie("refreshToken", refreshToken, options)
 			.json({
 				success: true,
 				user,
@@ -130,7 +135,7 @@ const logoutUser = (req, res) => {
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 			path: "/",
 		})
-		.clearCookie("e_refresh_token", {
+		.clearCookie("refreshToken", {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -143,8 +148,8 @@ const logoutUser = (req, res) => {
 // Middleware
 const authMiddleware = async (req, res, next) => {
 	const token = req.cookies.accessToken;
-	const e_refresh_token = req.cookies.e_refresh_token;
-	if (!token && !e_refresh_token) {
+	const refreshToken = req.cookies.refreshToken;
+	if (!token && !refreshToken) {
 		return res
 			.status(401)
 			.json({ success: false, message: "Unauthenticated: No token" });
@@ -179,15 +184,15 @@ const authMiddleware = async (req, res, next) => {
 
 // refresh token
 const refreshTokenController = async (req, res) => {
-	const e_refresh_token = req.cookies.e_refresh_token;
+	const refreshToken = req.cookies.refreshToken;
 
-	if (!e_refresh_token) {
+	if (!refreshToken) {
 		return res
 			.status(401)
 			.json({ success: false, message: "No refresh token" });
 	}
 	try {
-		const decoded = jwt.verify(e_refresh_token, process.env.REFRESH_TOKEN_KEY);
+		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
 
 		if (!decoded) {
 			return res
@@ -202,7 +207,7 @@ const refreshTokenController = async (req, res) => {
 				.json({ success: false, message: "User not found" });
 		}
 
-		if (e_refresh_token !== existingUser.e_refresh_token) {
+		if (refreshToken !== existingUser.refreshToken) {
 			return res
 				.status(401)
 				.json({ success: false, message: "Refresh token does not match" });
@@ -254,7 +259,7 @@ const refreshTokenController = async (req, res) => {
 		return res
 			.status(200)
 			.cookie("accessToken", accessToken, options)
-			.cookie("e_refresh_token", newRefreshToken, options)
+			.cookie("refreshToken", newRefreshToken, options)
 			.json({ success: true, message: "Token refreshed", user });
 	} catch (error) {
 		return res.status(401).json({ success: false, message: "Unauthenticated" });

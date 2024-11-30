@@ -97,17 +97,25 @@ const loginUser = async (req, res) => {
 		existingUser.refreshToken = refreshToken;
 		await existingUser.save();
 
-		const options = {
+		// Cookie options
+		const accessTokenOptions = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			maxAge: 5 * 60 * 1000,
 		};
 
+		const refreshTokenOptions = {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			maxAge: 7 * 24 * 60 * 60 * 1000,
+		};
 		// Set cookie and return response
 		return res
 			.status(200)
-			.cookie("accessToken", accessToken, options)
-			.cookie("refreshToken", refreshToken, options)
+			.cookie("accessToken", accessToken, accessTokenOptions)
+			.cookie("refreshToken", refreshToken, refreshTokenOptions)
 			.json({
 				success: true,
 				user,
@@ -237,16 +245,25 @@ const refreshTokenController = async (req, res) => {
 		existingUser.refreshToken = newRefreshToken;
 		await existingUser.save();
 
-		const options = {
+		// Cookie options
+		const accessTokenOptions = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			maxAge: 5 * 60 * 1000,
+		};
+
+		const refreshTokenOptions = {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			maxAge: 7 * 24 * 60 * 60 * 1000,
 		};
 
 		return res
 			.status(200)
-			.cookie("accessToken", accessToken, options)
-			.cookie("refreshToken", newRefreshToken, options)
+			.cookie("accessToken", accessToken, accessTokenOptions)
+			.cookie("refreshToken", newRefreshToken, refreshTokenOptions)
 			.json({ success: true, message: "Token refreshed", user });
 	} catch (error) {
 		return res.status(401).json({ success: false, message: "Unauthenticated" });

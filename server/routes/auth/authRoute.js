@@ -4,7 +4,6 @@ const {
 	loginUser,
 	logoutUser,
 	authMiddleware,
-	refreshTokenController,
 } = require("../../controllers/auth/authController");
 
 const router = express.Router();
@@ -18,5 +17,5 @@ router.get("/check-auth", authMiddleware, (req, res) => {
 		.status(200)
 		.json({ success: true, message: "Authenticated user", user });
 });
-router.get("/refresh-token", refreshTokenController);
+
 module.exports = router;

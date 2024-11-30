@@ -82,40 +82,22 @@ const loginUser = async (req, res) => {
 				expiresIn: process.env.TOKEN_KEY_EXPIRY,
 			}
 		);
-		// crate refresh token
-		const refreshToken = jwt.sign(
-			{
-				user,
-			},
-			process.env.REFRESH_TOKEN_KEY,
-			{
-				expiresIn: process.env.REFRESH_TOKEN_KEY_EXPIRY,
-			}
-		);
 
 		// update refresh token
-		existingUser.refreshToken = refreshToken;
+		existingUser.refreshToken = accessToken;
 		await existingUser.save();
 
 		// Cookie options
 		const accessTokenOptions = {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			maxAge: 5 * 60 * 1000,
+			sameSite: "lax"
 		};
 
-		const refreshTokenOptions = {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			maxAge: 7 * 24 * 60 * 60 * 1000,
-		};
 		// Set cookie and return response
 		return res
 			.status(200)
 			.cookie("accessToken", accessToken, accessTokenOptions)
-			.cookie("refreshToken", refreshToken, refreshTokenOptions)
 			.json({
 				success: true,
 				user,
@@ -130,12 +112,6 @@ const loginUser = async (req, res) => {
 const logoutUser = (req, res) => {
 	res
 		.clearCookie("accessToken", {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			path: "/",
-		})
-		.clearCookie("refreshToken", {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === "production",
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -182,97 +158,96 @@ const authMiddleware = async (req, res, next) => {
 	}
 };
 
-// refresh token
-const refreshTokenController = async (req, res) => {
-	const refreshToken = req.cookies.refreshToken;
+// // refresh token
+// const refreshTokenController = async (req, res) => {
+// 	const refreshToken = req.cookies.refreshToken;
 
-	if (!refreshToken) {
-		return res
-			.status(401)
-			.json({ success: false, message: "No refresh token" });
-	}
-	try {
-		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
+// 	if (!refreshToken) {
+// 		return res
+// 			.status(401)
+// 			.json({ success: false, message: "No refresh token" });
+// 	}
+// 	try {
+// 		const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY);
 
-		if (!decoded) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Invalid refresh token" });
-		}
-		const existingUser = await User.findById(decoded.user.id);
+// 		if (!decoded) {
+// 			return res
+// 				.status(401)
+// 				.json({ success: false, message: "Invalid refresh token" });
+// 		}
+// 		const existingUser = await User.findById(decoded.user.id);
 
-		if (!existingUser) {
-			return res
-				.status(401)
-				.json({ success: false, message: "User not found" });
-		}
+// 		if (!existingUser) {
+// 			return res
+// 				.status(401)
+// 				.json({ success: false, message: "User not found" });
+// 		}
 
-		if (refreshToken !== existingUser.refreshToken) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Refresh token does not match" });
-		}
+// 		if (refreshToken !== existingUser.refreshToken) {
+// 			return res
+// 				.status(401)
+// 				.json({ success: false, message: "Refresh token does not match" });
+// 		}
 
-		const user = {
-			id: existingUser._id,
-			email: existingUser.email,
-			role: existingUser.role,
-			username: existingUser.username,
-		};
+// 		const user = {
+// 			id: existingUser._id,
+// 			email: existingUser.email,
+// 			role: existingUser.role,
+// 			username: existingUser.username,
+// 		};
 
-		// create access token
-		const accessToken = jwt.sign(
-			{
-				user,
-			},
-			process.env.TOKEN_KEY,
-			{
-				expiresIn: process.env.TOKEN_KEY_EXPIRY,
-			}
-		);
-		// create refresh token
-		const newRefreshToken = jwt.sign(
-			{
-				user,
-			},
-			process.env.REFRESH_TOKEN_KEY,
-			{
-				expiresIn: process.env.REFRESH_TOKEN_KEY_EXPIRY,
-			}
-		);
+// 		// create access token
+// 		const accessToken = jwt.sign(
+// 			{
+// 				user,
+// 			},
+// 			process.env.TOKEN_KEY,
+// 			{
+// 				expiresIn: process.env.TOKEN_KEY_EXPIRY,
+// 			}
+// 		);
+// 		// create refresh token
+// 		const newRefreshToken = jwt.sign(
+// 			{
+// 				user,
+// 			},
+// 			process.env.REFRESH_TOKEN_KEY,
+// 			{
+// 				expiresIn: process.env.REFRESH_TOKEN_KEY_EXPIRY,
+// 			}
+// 		);
 
-		// update refresh token
-		existingUser.refreshToken = newRefreshToken;
-		await existingUser.save();
+// 		// update refresh token
+// 		existingUser.refreshToken = newRefreshToken;
+// 		await existingUser.save();
 
-		// Cookie options
-		const accessTokenOptions = {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			maxAge: 5 * 60 * 1000,
-		};
+// 		// Cookie options
+// 		const accessTokenOptions = {
+// 			httpOnly: true,
+// 			secure: process.env.NODE_ENV === "production",
+// 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+// 			maxAge: 5 * 60 * 1000,
+// 		};
 
-		const refreshTokenOptions = {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-			maxAge: 7 * 24 * 60 * 60 * 1000,
-		};
+// 		const refreshTokenOptions = {
+// 			httpOnly: true,
+// 			secure: process.env.NODE_ENV === "production",
+// 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+// 			maxAge: 7 * 24 * 60 * 60 * 1000,
+// 		};
 
-		return res
-			.status(200)
-			.cookie("accessToken", accessToken, accessTokenOptions)
-			.cookie("refreshToken", newRefreshToken, refreshTokenOptions)
-			.json({ success: true, message: "Token refreshed", user });
-	} catch (error) {
-		return res.status(401).json({ success: false, message: "Unauthenticated" });
-	}
-};
+// 		return res
+// 			.status(200)
+// 			.cookie("accessToken", accessToken, accessTokenOptions)
+// 			.cookie("refreshToken", newRefreshToken, refreshTokenOptions)
+// 			.json({ success: true, message: "Token refreshed", user });
+// 	} catch (error) {
+// 		return res.status(401).json({ success: false, message: "Unauthenticated" });
+// 	}
+// };
 module.exports = {
 	registerUser,
 	loginUser,
 	logoutUser,
 	authMiddleware,
-	refreshTokenController,
 };

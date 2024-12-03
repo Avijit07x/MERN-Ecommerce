@@ -98,7 +98,11 @@ export const updateProduct = createAsyncThunk(
 const productSlice = createSlice({
 	name: "adminProducts",
 	initialState,
-	reducers: {},
+	reducers: {
+		setProducts: (state, action) => {
+			console.log("aa");
+		},
+	},
 
 	extraReducers: (builder) => {
 		builder

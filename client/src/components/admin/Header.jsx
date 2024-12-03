@@ -11,7 +11,7 @@ const Header = ({ setOpen }) => {
 		dispatch(logoutUser());
 	}
 	return (
-		<header className="flex items-center justify-between border-b bg-background px-4 py-3">
+		<header className="sticky top-0 z-50 flex items-center justify-between border-b bg-background px-4 py-3">
 			<button
 				onClick={() => setOpen(true)}
 				className="bg-transparent sm:block lg:hidden"

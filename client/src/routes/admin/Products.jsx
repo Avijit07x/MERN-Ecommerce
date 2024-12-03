@@ -3,6 +3,7 @@ import ImageUpload from "@/components/admin/ImageUpload";
 import ProductTile from "@/components/admin/ProductTile";
 import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
 	Sheet,
 	SheetContent,
@@ -10,7 +11,7 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { deleteProduct, getProducts } from "@/store/admin/productSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -29,6 +30,7 @@ const AdminProducts = () => {
 		salePrice: "",
 		totalStock: "",
 	});
+	const [searchedText, setSearchedText] = useState("");
 
 	const { products, isLoading } = useSelector((state) => state.adminProduct);
 	const dispatch = useDispatch();
@@ -54,9 +56,33 @@ const AdminProducts = () => {
 		}
 	};
 
+	const handleSearchProduct = (e) => {
+		setSearchedText(e.target.value);
+	};
+
+	const searchedProducts = useMemo(() => {
+		if (searchedText === "") {
+			return products;
+		}
+		return products.filter((product) =>
+			product?.title.toLowerCase().includes(searchedText.toLowerCase()),
+		);
+	}, [products, searchedText]);
+
 	return (
 		<>
-			<div className="mb-5 flex w-full justify-end">
+			<div className="mb-5 flex w-full justify-between gap-5">
+				<div>
+					<Input
+						value={searchedText}
+						type="text"
+						name="search"
+						id="search"
+						placeholder="Search product by name"
+						className="h-9 lg:min-w-96"
+						onChange={handleSearchProduct}
+					/>
+				</div>
 				<Button size="sm" onClick={() => setOpenCreateProductsDialog(true)}>
 					Add Product
 				</Button>
@@ -65,7 +91,7 @@ const AdminProducts = () => {
 				<Loader />
 			) : (
 				<div className="grid w-full gap-4 md:grid-cols-3 lg:grid-cols-4">
-					{products?.map((product) => (
+					{searchedProducts?.map((product) => (
 						<ProductTile
 							key={product?._id}
 							product={product}

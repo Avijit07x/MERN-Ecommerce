@@ -8,6 +8,7 @@ const {
 	deleteProduct,
 	updateProduct,
 } = require("../../controllers/admin/ProductController");
+const { authMiddleware } = require("../../controllers/auth/authController");
 
 const router = express.Router();
 
@@ -17,10 +18,10 @@ router.post(
 	upload.single("image"),
 	handleImageUpload
 );
-router.post("/delete-image", handleImageDelete);
-router.post("/add-product", addProduct);
+router.post("/delete-image", authMiddleware, handleImageDelete);
+router.post("/add-product", authMiddleware, addProduct);
 router.get("/get-products", getProducts);
-router.post("/delete-product/:id", deleteProduct);
-router.put("/update-product", updateProduct);
+router.post("/delete-product/:id", authMiddleware, deleteProduct);
+router.put("/update-product", authMiddleware, updateProduct);
 
 module.exports = router;

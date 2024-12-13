@@ -23,7 +23,7 @@ const Header = ({ setOpen }) => {
 			<div className="flex flex-1 justify-end">
 				<form onSubmit={handleLogout}>
 					<Button
-						size="sm"
+						size="sm"					
 						className="inline-flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium shadow"
 					>
 						<LogOut className="size-5" />

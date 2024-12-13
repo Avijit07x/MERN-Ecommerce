@@ -9,10 +9,10 @@ import store from "./store/store.js";
 
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
-		<BrowserRouter>
+		<BrowserRouter future={{ v7_startTransition: true }}>
 			<Provider store={store}>
 				<App />
-				<Toaster richColors closeButton/>
+				<Toaster richColors closeButton />
 				{/* <Toaster /> */}
 			</Provider>
 		</BrowserRouter>

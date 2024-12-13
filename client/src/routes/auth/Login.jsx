@@ -48,7 +48,7 @@ const Login = () => {
 				<p className="mt-2">
 					Don't have an account
 					<Link
-						className="ml-2 font-medium text-primary hover:underline"
+						className="ml-2 font-medium underline text-primary hover:underline"
 						to="/auth/register"
 					>
 						Register

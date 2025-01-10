@@ -24,7 +24,7 @@ const ShoppingHeader = () => {
 			<div className="flex h-16 items-center justify-between px-4 md:px-6">
 				<Link to="/shop/home" className="flex items-center gap-2">
 					<img className="size-8" src="/shopping-cart.png" alt="logo" />
-					<span className="font-bold">Ecommerce</span>
+					<span className="font-bold">ECommerce</span>
 				</Link>
 				<Sheet aria-describedby={"sidebar"}>
 					{isAuthenticated ? (

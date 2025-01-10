@@ -36,7 +36,7 @@ const App = () => {
 
 	return (
 		<div>
-			<Routes>
+			<Routes >
 				<Route
 					path="/"
 					element={

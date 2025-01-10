@@ -56,6 +56,7 @@ const AdminProducts = () => {
 		}
 	};
 
+	// search product
 	const handleSearchProduct = (e) => {
 		setSearchedText(e.target.value);
 	};
@@ -64,9 +65,13 @@ const AdminProducts = () => {
 		if (searchedText === "") {
 			return products;
 		}
-		return products.filter((product) =>
+		const filteredProducts = products.filter((product) =>
 			product?.title.toLowerCase().includes(searchedText.toLowerCase()),
 		);
+		if (filteredProducts.length === 0) {
+			return products;
+		}
+		return filteredProducts;
 	}, [products, searchedText]);
 
 	return (
@@ -79,7 +84,7 @@ const AdminProducts = () => {
 						name="search"
 						id="search"
 						placeholder="Search product by name"
-						className="h-9 lg:min-w-96"
+						className="h-9 sm:w-72 lg:w-80 xl:w-96"
 						onChange={handleSearchProduct}
 					/>
 				</div>
@@ -90,7 +95,7 @@ const AdminProducts = () => {
 			{isLoading ? (
 				<Loader />
 			) : (
-				<div className="grid w-full gap-4 md:grid-cols-3 lg:grid-cols-4">
+				<div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
 					{searchedProducts?.map((product) => (
 						<ProductTile
 							key={product?._id}

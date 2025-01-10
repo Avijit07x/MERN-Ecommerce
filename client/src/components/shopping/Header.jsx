@@ -1,5 +1,5 @@
 import { logoutUser } from "@/store/authSlice";
-import { Menu, ShoppingBag } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
@@ -23,13 +23,17 @@ const ShoppingHeader = () => {
 		<header className="sticky top-0 z-40 w-full border-b bg-background">
 			<div className="flex h-16 items-center justify-between px-4 md:px-6">
 				<Link to="/shop/home" className="flex items-center gap-2">
-					<ShoppingBag className="h-6 w-6" />
+					<img className="size-8" src="/shopping-cart.png" alt="logo" />
 					<span className="font-bold">Ecommerce</span>
 				</Link>
 				<Sheet aria-describedby={"sidebar"}>
 					{isAuthenticated ? (
 						<SheetTrigger asChild>
-							<Button variant="ghost" size="icon" className="lg:hidden p-0 size-min">
+							<Button
+								variant="ghost"
+								size="icon"
+								className="size-min p-0 lg:hidden"
+							>
 								<Menu className="size-6" />
 								<span className="sr-only">Toggle header menu</span>
 							</Button>
@@ -40,7 +44,9 @@ const ShoppingHeader = () => {
 					<SheetContent side="right" className="w-full max-w-xs">
 						<SheetHeader>
 							<SheetTitle>Menu</SheetTitle>
-							<SheetDescription></SheetDescription>
+							<SheetDescription>
+								<Button onClick={handleLogout}>Logout</Button>
+							</SheetDescription>
 						</SheetHeader>
 					</SheetContent>
 				</Sheet>

@@ -31,7 +31,10 @@ const registerUser = async (req, res) => {
 		}
 
 		// hash password
-		const hashedPassword = await bcrypt.hash(password, 5);
+		const hashedPassword = await bcrypt.hash(
+			password,
+			process.env.BCRYPT_SALT_ROUNDS
+		);
 		const user = { username, email, password: hashedPassword };
 
 		// save new user

@@ -42,6 +42,12 @@ const ImageUpload = ({
 			const response = await axios.post(
 				import.meta.env.VITE_SERVER_URL + "/admin/product/upload-image",
 				data,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data",
+					},
+					withCredentials: true,
+				},
 			);
 			if (response.data) {
 				console.log("image uploaded successfully");
@@ -62,6 +68,9 @@ const ImageUpload = ({
 			const response = await axios.post(
 				import.meta.env.VITE_SERVER_URL + "/admin/product/delete-image",
 				{ id: uploadedImageUrl.public_id },
+				{
+					withCredentials: true,
+				},
 			);
 			if (response.data.success) {
 				setImageFile(null);

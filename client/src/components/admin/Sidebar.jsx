@@ -4,7 +4,7 @@ import {
 	LayoutDashboard,
 	ShoppingBasket,
 } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 
 const adminSidebarMenuItems = [
@@ -12,19 +12,19 @@ const adminSidebarMenuItems = [
 		id: "dashboard",
 		label: "Dashboard",
 		path: "/admin/dashboard",
-		icon: <LayoutDashboard />,
+		icon: <LayoutDashboard className="size-6" />,
 	},
 	{
 		id: "products",
 		label: "Products",
 		path: "/admin/products",
-		icon: <ShoppingBasket />,
+		icon: <ShoppingBasket className="size-6" />,
 	},
 	{
 		id: "orders",
 		label: "Orders",
 		path: "/admin/orders",
-		icon: <BadgeCheck />,
+		icon: <BadgeCheck className="size-6" />,
 	},
 ];
 
@@ -33,7 +33,7 @@ function MenuItems({ setOpen }) {
 	const location = useLocation();
 
 	return (
-		<nav className="mt-8 flex flex-col gap-2">
+		<nav className="mt-8 flex flex-col gap-3">
 			{adminSidebarMenuItems.map((menuItem) => (
 				<div
 					key={menuItem.id}
@@ -41,7 +41,7 @@ function MenuItems({ setOpen }) {
 						navigate(menuItem.path);
 						setOpen ? setOpen(false) : null;
 					}}
-					className={` ${location.pathname === menuItem.path ? "bg-muted text-foreground" : "text-muted-foreground"} flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 hover:bg-muted hover:text-foreground`}
+					className={`${location.pathname === menuItem.path ? "bg-muted text-foreground" : "text-muted-foreground"} flex cursor-pointer items-center gap-2 rounded-xl px-3 py-2 hover:bg-muted hover:text-foreground`}
 				>
 					{menuItem.icon}
 					<span className="text-sm font-medium">{menuItem.label}</span>
@@ -70,7 +70,7 @@ const Sidebar = ({ open, setOpen }) => {
 					</div>
 				</SheetContent>
 			</Sheet>
-			<aside className="hidden w-64 select-none flex-col sticky top-0 z-50 h-screen border-r bg-background p-6 lg:flex">
+			<aside className="sticky top-0 z-50 hidden h-screen w-64 select-none flex-col border-r bg-background p-6 lg:flex">
 				<div
 					onClick={() => navigate("/admin/dashboard")}
 					className="flex cursor-pointer items-center gap-2"

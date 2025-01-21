@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const NotFound = () => {
 	return (
@@ -6,7 +6,6 @@ const NotFound = () => {
 			<h1> page does not exist</h1>
 
 			<Link to="/" className="mt-5 underline">
-				
 				go back
 			</Link>
 		</div>

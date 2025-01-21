@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router";
 import AdminLayout from "./components/admin/Layout";
 import AuthLayout from "./components/auth/layout";
 import CheckAuth from "./components/check-auth/CheckAuth";
@@ -36,7 +36,7 @@ const App = () => {
 
 	return (
 		<div>
-			<Routes >
+			<Routes>
 				<Route
 					path="/"
 					element={

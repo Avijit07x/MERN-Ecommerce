@@ -41,7 +41,6 @@ export const loginUser = createAsyncThunk(
 			);
 
 			const result = res.data;
-
 			return result;
 		} catch (error) {
 			return error.response.data;

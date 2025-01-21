@@ -124,6 +124,7 @@ const logoutUser = (req, res) => {
 // Middleware
 const authMiddleware = async (req, res, next) => {
 	const token = req.cookies.accessToken;
+
 	if (!token) {
 		return res
 			.status(401)

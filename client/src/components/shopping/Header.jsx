@@ -1,7 +1,7 @@
 import { logoutUser } from "@/store/authSlice";
 import { Menu } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { Button } from "../ui/button";
 import {
 	Sheet,

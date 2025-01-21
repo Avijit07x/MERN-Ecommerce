@@ -52,6 +52,10 @@ export default {
 					5: "hsl(var(--chart-5))",
 				},
 			},
+			backgroundImage: {
+				"login-gradient":
+					"linear-gradient(180deg, #0575E6 0%, #02298A 84.79%, #021B79 100%)",
+			},
 		},
 	},
 	plugins: [tailwindcss],

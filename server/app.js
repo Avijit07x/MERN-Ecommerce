@@ -10,9 +10,6 @@ const helmet = require("helmet");
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// DB Connection
-connectToDB();
-
 // Cors
 app.use(
 	cors({
@@ -33,6 +30,9 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// DB Connection
+connectToDB();
 
 // Routes
 app.use("/api/auth", authRoute);

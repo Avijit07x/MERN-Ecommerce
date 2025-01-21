@@ -212,7 +212,7 @@ const AddProductForm = ({
 				</div>
 
 				<div>
-					<Button type="submit" className="mt-2 w-full">
+					<Button type="submit" className="mt-2 w-full bg-blue-600 hover:bg-blue-600/90">
 						{currentEditedId ? "Update Product" : "Add Product"}
 					</Button>
 				</div>

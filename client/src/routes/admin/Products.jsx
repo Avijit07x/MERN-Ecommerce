@@ -88,7 +88,11 @@ const AdminProducts = () => {
 						onChange={handleSearchProduct}
 					/>
 				</div>
-				<Button size="sm" onClick={() => setOpenCreateProductsDialog(true)}>
+				<Button
+					size="sm"
+					className="rounded-full text-sm bg-blue-600 hover:bg-blue-600/90"
+					onClick={() => setOpenCreateProductsDialog(true)}
+				>
 					Add Product
 				</Button>
 			</div>

@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerUser } from "@/store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 const Register = () => {
@@ -34,15 +34,15 @@ const Register = () => {
 	};
 
 	return (
-		<div className="mx-auto w-full max-w-md space-y-6">
+		<div className="mx-auto w-full max-w-md space-y-6 text-white lg:text-black">
 			<div className="text-center">
-				<h1 className="text-3xl font-bold tracking-tight text-foreground">
+				<h1 className="text-3xl font-bold tracking-tight">
 					Create new account
 				</h1>
 				<p className="mt-2">
 					Already have an account
 					<Link
-						className="ml-2 font-medium text-primary underline hover:underline"
+						className="ml-2 font-medium underline hover:underline"
 						to="/auth/login"
 					>
 						Login
@@ -58,6 +58,7 @@ const Register = () => {
 						name="username"
 						placeholder="Enter your user name"
 						required
+						className="rounded-full text-black lg:text-white"
 					/>
 				</div>
 				<div className="space-y-1">
@@ -68,6 +69,7 @@ const Register = () => {
 						name="email"
 						placeholder="Enter your email"
 						required
+						className="rounded-full text-black lg:text-white"
 					/>
 				</div>
 				<div className="space-y-1">
@@ -78,11 +80,12 @@ const Register = () => {
 						name="password"
 						placeholder="Enter your password"
 						required
+						className="rounded-full text-black lg:text-white"
 					/>
 				</div>
 				<Button
 					disable={isLoading.toString()}
-					className="w-full bg-blue-500 duration-300 hover:bg-blue-500/90"
+					className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
 				>
 					{isLoading ? "loading" : "Register"}
 				</Button>

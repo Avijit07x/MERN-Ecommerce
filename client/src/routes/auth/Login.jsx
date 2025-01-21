@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -40,15 +40,15 @@ const Login = () => {
 		});
 	};
 	return (
-		<div className="mx-auto w-full max-w-md space-y-6">
+		<div className="mx-auto w-full max-w-md space-y-6 text-white lg:text-black">
 			<div className="text-center">
-				<h1 className="text-3xl font-bold tracking-tight text-foreground">
+				<h1 className="text-3xl font-bold tracking-tight">
 					Sign in to your account
 				</h1>
 				<p className="mt-2">
 					Don't have an account
 					<Link
-						className="ml-2 font-medium underline text-primary hover:underline"
+						className="ml-2 font-medium underline hover:underline"
 						to="/auth/register"
 					>
 						Register
@@ -64,6 +64,7 @@ const Login = () => {
 						name="email"
 						placeholder="Enter your email"
 						autoComplete="email"
+						className="rounded-full text-black lg:text-white"
 					/>
 				</div>
 				<div className="space-y-1">
@@ -74,12 +75,13 @@ const Login = () => {
 						name="password"
 						placeholder="Enter your password"
 						autoComplete="current-password"
+						className="rounded-full text-black lg:text-white"
 					/>
 				</div>
 				<Button
 					type="submit"
 					disable={isLoading.toString()}
-					className="w-full bg-blue-500 duration-300 hover:bg-blue-500/90"
+					className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
 				>
 					Sign in
 				</Button>

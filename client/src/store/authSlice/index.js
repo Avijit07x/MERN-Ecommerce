@@ -126,7 +126,6 @@ export const authSlice = createSlice({
 				state.currentUser = null;
 				state.isAuthenticated = false;
 			})
-
 			.addCase(loginUser.pending, (state) => {
 				state.isLoading = true;
 			})
@@ -137,7 +136,7 @@ export const authSlice = createSlice({
 					: null;
 				state.isAuthenticated = action.payload?.success;
 			})
-			.addCase(loginUser.rejected, (state, action) => {
+			.addCase(loginUser.rejected, (state) => {
 				state.isAuthenticated = false;
 				state.isLoading = false;
 				state.currentUser = null;
@@ -152,7 +151,7 @@ export const authSlice = createSlice({
 					: null;
 				state.isAuthenticated = action.payload?.success;
 			})
-			.addCase(checkAuth.rejected, (state, action) => {
+			.addCase(checkAuth.rejected, (state) => {
 				state.isAuthenticated = false;
 				state.isLoading = false;
 				state.currentUser = null;

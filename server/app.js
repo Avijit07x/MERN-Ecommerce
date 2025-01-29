@@ -6,6 +6,7 @@ const connectToDB = require("./db/db");
 const authRoute = require("./routes/auth/authRoute");
 const productRoute = require("./routes/admin/ProductRoute");
 const helmet = require("helmet");
+const limiter = require("./helpers/RateLimit");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -30,6 +31,7 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+app.use(limiter);
 
 // DB Connection
 connectToDB();

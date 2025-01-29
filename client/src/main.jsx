@@ -13,7 +13,6 @@ createRoot(document.getElementById("root")).render(
 			<Provider store={store}>
 				<App />
 				<Toaster richColors closeButton />
-				{/* <Toaster /> */}
 			</Provider>
 		</BrowserRouter>
 	</StrictMode>,

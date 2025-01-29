@@ -15,7 +15,7 @@ const ProductTile = ({
 					<img
 						src={product?.image.url}
 						alt={product?.title}
-						className="absolute h-full w-full transform rounded-t-lg object-cover transition-transform duration-300  lg:hover:scale-110 lg:hover:cursor-pointer"
+						className="absolute h-full w-full transform rounded-t-lg object-cover transition-transform duration-300 lg:hover:scale-110 lg:hover:cursor-pointer"
 					/>
 				</div>
 

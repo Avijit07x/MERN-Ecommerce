@@ -11,7 +11,7 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { deleteProduct, getProducts } from "@/store/admin/productSlice";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -31,14 +31,15 @@ const AdminProducts = () => {
 		totalStock: "",
 	});
 	const [searchedText, setSearchedText] = useState("");
-
 	const { products, isLoading } = useSelector((state) => state.adminProduct);
 	const dispatch = useDispatch();
 
 	// get all products
 	useEffect(() => {
-		dispatch(getProducts());
-	}, []);
+		if (products.length === 0) {
+			dispatch(getProducts());
+		}
+	}, [dispatch, products]);
 
 	// delete product
 	const handleDelete = (productId) => {
@@ -90,7 +91,7 @@ const AdminProducts = () => {
 				</div>
 				<Button
 					size="sm"
-					className="rounded-full text-sm bg-blue-600 hover:bg-blue-600/90"
+					className="rounded-full bg-blue-600 text-sm hover:bg-blue-600/90"
 					onClick={() => setOpenCreateProductsDialog(true)}
 				>
 					Add Product
@@ -143,4 +144,4 @@ const AdminProducts = () => {
 	);
 };
 
-export default AdminProducts;
+export default memo(AdminProducts);

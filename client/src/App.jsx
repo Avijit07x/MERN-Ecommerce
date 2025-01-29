@@ -21,9 +21,8 @@ import UnAuth from "./routes/unauth/UnAuth";
 import { checkAuth } from "./store/authSlice";
 
 const App = () => {
-	const { isAuthenticated, currentUser, isLoading } = useSelector(
-		(state) => state.auth,
-	);
+	const { isLoading } = useSelector((state) => state.auth);
+
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -37,18 +36,14 @@ const App = () => {
 	return (
 		<div>
 			<Routes>
-				<Route
-					path="/"
-					element={
-						<CheckAuth isAuthenticated={isAuthenticated} user={currentUser} />
-					}
-				/>
+				<Route path="/" element={<CheckAuth />} />
+
 				{/* auth routes */}
 
 				<Route
 					path="/auth"
 					element={
-						<CheckAuth isAuthenticated={isAuthenticated} user={currentUser}>
+						<CheckAuth>
 							<AuthLayout />
 						</CheckAuth>
 					}
@@ -60,9 +55,9 @@ const App = () => {
 				{/* admin routes */}
 
 				<Route
-					path="/admin"
+					path="admin"
 					element={
-						<CheckAuth isAuthenticated={isAuthenticated} user={currentUser}>
+						<CheckAuth>
 							<AdminLayout />
 						</CheckAuth>
 					}
@@ -76,9 +71,9 @@ const App = () => {
 				{/* shopping routes */}
 
 				<Route
-					path="/shop"
+					path="shop"
 					element={
-						<CheckAuth isAuthenticated={isAuthenticated} user={currentUser}>
+						<CheckAuth>
 							<ShoppingLayout />
 						</CheckAuth>
 					}
@@ -91,11 +86,11 @@ const App = () => {
 
 				{/* not found route */}
 
-				<Route path="*" element={<NotFound />}></Route>
+				<Route path="*" element={<NotFound />} />
 
 				{/* UnAuth */}
 
-				<Route path="/unauth" element={<UnAuth />}></Route>
+				<Route path="unauth" element={<UnAuth />} />
 			</Routes>
 		</div>
 	);

@@ -1,6 +1,8 @@
+import { useSelector } from "react-redux";
 import { Navigate, useLocation } from "react-router";
 
-const CheckAuth = ({ children, isAuthenticated, user }) => {
+const CheckAuth = ({ children }) => {
+	const { isAuthenticated, currentUser } = useSelector((state) => state.auth);
 	const location = useLocation();
 
 	if (location.pathname === "/") {
@@ -8,7 +10,7 @@ const CheckAuth = ({ children, isAuthenticated, user }) => {
 			return <Navigate to="/auth/login" />;
 		}
 		if (isAuthenticated) {
-			if (user?.role === "admin") {
+			if (currentUser?.role === "admin") {
 				return <Navigate to="/admin/dashboard" />;
 			}
 
@@ -31,7 +33,7 @@ const CheckAuth = ({ children, isAuthenticated, user }) => {
 		(location.pathname.includes("/login") ||
 			location.pathname.includes("/register"))
 	) {
-		if (user?.role === "admin") {
+		if (currentUser?.role === "admin") {
 			return <Navigate to="/admin/dashboard" />;
 		} else {
 			return <Navigate to="/shop/home" />;
@@ -40,14 +42,14 @@ const CheckAuth = ({ children, isAuthenticated, user }) => {
 
 	if (
 		isAuthenticated &&
-		user?.role !== "admin" &&
+		currentUser?.role !== "admin" &&
 		location.pathname.includes("admin")
 	) {
 		return <Navigate to="/unauth" />;
 	}
 	if (
 		isAuthenticated &&
-		user?.role === "admin" &&
+		currentUser?.role === "admin" &&
 		location.pathname.includes("shop")
 	) {
 		return <Navigate to="/admin/dashboard" />;

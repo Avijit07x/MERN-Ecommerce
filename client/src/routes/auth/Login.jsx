@@ -64,7 +64,7 @@ const Login = () => {
 						name="email"
 						placeholder="Enter your email"
 						autoComplete="email"
-						className="rounded-full text-black lg:text-white"
+						className="rounded-full text-black"
 					/>
 				</div>
 				<div className="space-y-1">
@@ -75,7 +75,7 @@ const Login = () => {
 						name="password"
 						placeholder="Enter your password"
 						autoComplete="current-password"
-						className="rounded-full text-black lg:text-white"
+						className="rounded-full text-black"
 					/>
 				</div>
 				<Button

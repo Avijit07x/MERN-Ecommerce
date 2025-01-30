@@ -1,23 +1,29 @@
 import { shoppingViewHeaderMenuItems } from "@/config/config";
 import { logoutUser } from "@/store/authSlice";
-import { Menu } from "lucide-react";
+import { Menu, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import {
 	Sheet,
 	SheetContent,
-	SheetHeader,
+	SheetDescription,
 	SheetTitle,
 	SheetTrigger,
 } from "../ui/sheet";
+import HeaderRight from "./HeaderRight";
 
 const MenuItems = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams, setSearchParams] = useSearchParams();
-
+	const handleNavigate = (menuItem) => {
+		if (location.pathname !== menuItem.path) {
+			setSearchParams({ category: menuItem.searchParam });
+		}
+	};
 	return (
 		<nav className="mb-3 flex flex-col gap-6 lg:mb-0 lg:flex-row lg:items-center">
 			{shoppingViewHeaderMenuItems.map((menuItem) => (
@@ -60,16 +66,31 @@ const ShoppingHeader = () => {
 						</Button>
 					</SheetTrigger>
 					<SheetContent side="right" className="w-full max-w-xs">
-						<SheetHeader>
-							<SheetTitle>Menu</SheetTitle>
-							<MenuItems />
-							<Button onClick={handleLogout}>Logout</Button>
-						</SheetHeader>
+						<SheetTitle className="sr-only">Menu</SheetTitle>
+						<SheetDescription className="sr-only"></SheetDescription>
+						<MenuItems />
+						<Button onClick={handleLogout}>Logout</Button>
 					</SheetContent>
 				</Sheet>
 				<div className="hidden lg:block">
 					<MenuItems />
 				</div>
+				{isAuthenticated ? (
+					<div className="hidden items-center gap-5 lg:flex">
+						<Button
+							variant="outline"
+							size="icon"
+							aria-label="cart"
+							className="relative size-9"
+						>
+							<ShoppingCart className="size-5" />
+							<Badge className="absolute -top-3 left-full text-xs flex min-w-5 -translate-x-1/2 items-center justify-center px-1">
+								99+
+							</Badge>
+						</Button>
+						<HeaderRight handleLogout={handleLogout} />
+					</div>
+				) : null}
 			</div>
 		</header>
 	);

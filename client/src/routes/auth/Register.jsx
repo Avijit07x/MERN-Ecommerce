@@ -58,7 +58,7 @@ const Register = () => {
 						name="username"
 						placeholder="Enter your user name"
 						required
-						className="rounded-full text-black lg:text-white"
+						className="rounded-full text-black"
 					/>
 				</div>
 				<div className="space-y-1">
@@ -69,7 +69,7 @@ const Register = () => {
 						name="email"
 						placeholder="Enter your email"
 						required
-						className="rounded-full text-black lg:text-white"
+						className="rounded-full text-black"
 					/>
 				</div>
 				<div className="space-y-1">
@@ -80,7 +80,7 @@ const Register = () => {
 						name="password"
 						placeholder="Enter your password"
 						required
-						className="rounded-full text-black lg:text-white"
+						className="rounded-full text-black"
 					/>
 				</div>
 				<Button

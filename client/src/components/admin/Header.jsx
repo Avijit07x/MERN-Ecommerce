@@ -1,7 +1,7 @@
 import { logoutUser } from "@/store/authSlice";
-import { AlignJustify, LogOut } from "lucide-react";
+import { AlignJustify } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { Button } from "../ui/button";
+import HeaderRight from "../shopping/HeaderRight";
 
 const Header = ({ setOpen }) => {
 	const dispatch = useDispatch();
@@ -21,16 +21,7 @@ const Header = ({ setOpen }) => {
 			</button>
 
 			<div className="flex flex-1 justify-end">
-				<form onSubmit={handleLogout}>
-					<Button
-						size="sm"
-						variant="destructive"
-						className="inline-flex items-center justify-center gap-2 rounded-full px-3 text-xs font-medium shadow"
-					>
-						<LogOut className="size-4" />
-						Logout
-					</Button>
-				</form>
+				<HeaderRight handleLogout={handleLogout} />
 			</div>
 		</header>
 	);

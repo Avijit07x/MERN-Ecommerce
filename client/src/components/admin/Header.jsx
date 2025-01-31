@@ -1,7 +1,7 @@
 import { logoutUser } from "@/store/authSlice";
-import { AlignJustify } from "lucide-react";
+import { AlignJustify, LogOut } from "lucide-react";
 import { useDispatch } from "react-redux";
-import HeaderRight from "../shopping/HeaderRight";
+import { Button } from "../ui/button";
 
 const Header = ({ setOpen }) => {
 	const dispatch = useDispatch();
@@ -20,8 +20,16 @@ const Header = ({ setOpen }) => {
 				<span className="sr-only">Toggle Menu</span>
 			</button>
 
-			<div className="flex flex-1 justify-end">
-				<HeaderRight handleLogout={handleLogout} />
+			<div className="flex flex-1 justify-end pr-3">
+				<Button
+					variant="destructive"
+					size="sm"
+					className="gap-2 rounded-full text-sm"
+					onClick={handleLogout}
+				>
+					{" "}
+					<LogOut className="size-4" /> Logout
+				</Button>
 			</div>
 		</header>
 	);

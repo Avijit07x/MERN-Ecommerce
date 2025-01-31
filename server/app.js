@@ -31,7 +31,7 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(limiter);
+// app.use(limiter);
 
 // DB Connection
 connectToDB();

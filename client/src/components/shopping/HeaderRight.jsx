@@ -8,13 +8,13 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-import { LogOut } from "lucide-react";
+import { LogOut, UserCog } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 const HeaderRight = ({ handleLogout }) => {
 	const { currentUser } = useSelector((state) => state.auth);
-
+	const navigate = useNavigate();
 	return (
 		<div>
 			<DropdownMenu>
@@ -40,13 +40,17 @@ const HeaderRight = ({ handleLogout }) => {
 						</span>
 					</DropdownMenuLabel>
 					<DropdownMenuSeparator />
+					<DropdownMenuItem
+						className="cursor-pointer"
+						onClick={() => {
+							navigate("account");
+						}}
+					>
+						<UserCog size={16} strokeWidth={2} className="opacity-60" />
+						<span>Account</span>
+					</DropdownMenuItem>
 					<DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-						<LogOut
-							size={16}
-							strokeWidth={2}
-							className="opacity-60"
-							aria-hidden="true"
-						/>
+						<LogOut size={16} strokeWidth={2} className="opacity-60" />
 						<span>Logout</span>
 					</DropdownMenuItem>
 				</DropdownMenuContent>

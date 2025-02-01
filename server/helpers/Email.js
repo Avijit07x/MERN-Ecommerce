@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 const sendOTPEmail = async (email, otp) => {
 	const mailOptions = {
-		from: "Avijit Dey <no-reply@yourdomain.com>", // Add a no-reply email address
+		from: "Avijit Dey",
 		to: email,
 		subject: "Your OTP Code",
 		html: `
@@ -32,7 +32,7 @@ const sendOTPEmail = async (email, otp) => {
               <p style="color: #555; font-size: 14px; text-align: center;">
                 Thank you,<br>
                 <strong>Avijit Dey</strong><br>
-                <a href="mailto:deyavijit134@.com" style="color: #007bff;">Contact Support</a>
+                <a href="mailto:deyavijit134@gmail.com" style="color: #007bff;">Contact Support</a>
               </p>
             </div>
           </body>

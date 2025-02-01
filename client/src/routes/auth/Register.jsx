@@ -12,11 +12,13 @@ const Register = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const [showOtpForm, setShowOtpForm] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [registeredEmail, setRegisteredEmail] = useState("");
 	const { isLoading } = useSelector((state) => state.auth);
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		setIsSubmitting(true);
 		const formData = new FormData(event.target);
 		const { username, email, password } = Object.fromEntries(formData);
 
@@ -29,14 +31,17 @@ const Register = () => {
 				toast.success("Registration successful! Please verify OTP");
 				setRegisteredEmail(email);
 				setShowOtpForm(true);
+				setIsSubmitting(false);
 			} else {
 				toast.error(data.payload?.message);
+				setIsSubmitting(false);
 			}
 		});
 	};
 
 	const handleOtpSubmit = async (event) => {
 		event.preventDefault();
+		setIsSubmitting(true);
 		const formData = new FormData(event.target);
 		const { otp } = Object.fromEntries(formData);
 
@@ -47,9 +52,11 @@ const Register = () => {
 		dispatch(verifyOtp(urlencoded)).then((data) => {
 			if (data.payload?.success) {
 				toast.success(data.payload?.message);
+				setIsSubmitting(false);
 				navigate("/auth/login");
 			} else {
 				toast.error(data.payload?.message);
+				setIsSubmitting(false);
 			}
 		});
 	};
@@ -111,13 +118,12 @@ const Register = () => {
 							/>
 						</div>
 						<Button
-							disable={isLoading.toString()}
+							disabled={isSubmitting}
 							className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
 						>
-							{isLoading ? (
+							{isSubmitting ? (
 								<div className="flex items-center gap-2">
-									{" "}
-									<Loader className="size-4 animate-spin" />{" "}
+									<Loader className="size-4 animate-spin" />
 									<span>Registering</span>
 								</div>
 							) : (
@@ -154,15 +160,22 @@ const Register = () => {
 							/>
 						</div>
 						<Button
-							disabled={isLoading}
+							disabled={isSubmitting}
 							className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
 						>
-							{isLoading ? "Verifying..." : "Verify OTP"}
+							{isSubmitting ? (
+								<div className="flex items-center gap-2">
+									<Loader className="size-4 animate-spin" />{" "}
+									<span>Verifying</span>
+								</div>
+							) : (
+								"Verify OTP"
+							)}
 						</Button>
 						<Button
 							type="button"
 							variant="outline"
-							disabled={isLoading.toString()}
+							disabled={isSubmitting}
 							className="w-full rounded-full text-black"
 							onClick={() => setShowOtpForm(false)}
 						>

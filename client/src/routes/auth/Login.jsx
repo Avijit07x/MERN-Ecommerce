@@ -3,17 +3,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/store/authSlice";
 import { Loader } from "lucide-react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 const Login = () => {
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const { isLoading } = useSelector((state) => state.auth);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const handleSubmit = (event) => {
 		event.preventDefault();
+		setIsSubmitting(true);
 		const formData = new FormData(event.target);
 		const { email, password } = Object.fromEntries(formData);
 
@@ -30,12 +33,12 @@ const Login = () => {
 		}
 		dispatch(loginUser(urlencodedData)).then((data) => {
 			if (data.payload?.success) {
+				setIsSubmitting(false);
 				navigate("/");
-
 				toast.success(data.payload?.message);
 			}
-
 			if (!data.payload?.success) {
+				setIsSubmitting(false);
 				toast.error(data.payload?.message);
 			}
 		});
@@ -81,12 +84,11 @@ const Login = () => {
 				</div>
 				<Button
 					type="submit"
-					disable={isLoading.toString()}
-					className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90 disabled:cursor-not-allowed disabled:bg-gray-400"
+					disabled={isSubmitting}
+					className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
 				>
-					{isLoading ? (
+					{isSubmitting ? (
 						<div className="flex items-center gap-2">
-							{" "}
 							<Loader className="size-4 animate-spin" /> <span>Signing in</span>
 						</div>
 					) : (

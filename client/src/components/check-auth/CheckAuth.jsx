@@ -13,7 +13,6 @@ const CheckAuth = ({ children }) => {
 			if (currentUser?.role === "admin") {
 				return <Navigate to="/admin/dashboard" />;
 			}
-
 			return <Navigate to="/shop/home" />;
 		}
 	}

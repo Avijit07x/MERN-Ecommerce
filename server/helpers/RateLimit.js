@@ -11,4 +11,5 @@ const limiter = rateLimit({
 	},
 });
 
-module.exports = limiter;
+module.exports =
+	process.env.NODE_ENV === "production" ? limiter : (req, res, next) => next();

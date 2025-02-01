@@ -29,13 +29,7 @@ const App = () => {
 		dispatch(checkAuth());
 	}, [dispatch]);
 
-	if (
-		isLoading &&
-		!(
-			location.pathname === "/auth/login" ||
-			location.pathname === "/auth/register"
-		)
-	) {
+	if (isLoading) {
 		return <Loader />;
 	}
 

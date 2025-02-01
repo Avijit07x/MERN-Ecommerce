@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { registerUser } from "@/store/authSlice";
+import { registerUser, verifyOtp } from "@/store/authSlice";
 import { Loader } from "lucide-react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -13,23 +13,34 @@ const Register = () => {
 	const navigate = useNavigate();
 	const [showOtpForm, setShowOtpForm] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [registeredEmail, setRegisteredEmail] = useState("");
-	const { isLoading } = useSelector((state) => state.auth);
+	const [otpError, setOtpError] = useState("");
+	const [formData, setFormData] = useState({
+		username: "",
+		email: "",
+		password: "",
+	});
+	const [otp, setOtp] = useState("");
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData({ ...formData, [name]: value });
+	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		setIsSubmitting(true);
-		const formData = new FormData(event.target);
-		const { username, email, password } = Object.fromEntries(formData);
+		if (
+			formData.username === "" ||
+			formData.password === "" ||
+			formData.email === ""
+		) {
+			toast.error("Please fill all the fields");
+			return;
+		}
 
-		const urlencoded = new URLSearchParams();
-		urlencoded.append("username", username);
-		urlencoded.append("email", email);
-		urlencoded.append("password", password);
-		dispatch(registerUser(urlencoded)).then((data) => {
+		dispatch(registerUser(formData)).then((data) => {
 			if (data.payload?.success) {
 				toast.success("Registration successful! Please verify OTP");
-				setRegisteredEmail(email);
 				setShowOtpForm(true);
 				setIsSubmitting(false);
 			} else {
@@ -39,20 +50,25 @@ const Register = () => {
 		});
 	};
 
+	const handleOtpChange = (event) => {
+		const { value } = event.target;
+		if (isNaN(value)) {
+			setOtpError("OTP must be a number");
+			return;
+		}
+		setOtpError("");
+		if (value.length > 6) return;
+		setOtp(value);
+	};
+
 	const handleOtpSubmit = async (event) => {
 		event.preventDefault();
 		setIsSubmitting(true);
-		const formData = new FormData(event.target);
-		const { otp } = Object.fromEntries(formData);
-
-		const urlencoded = new URLSearchParams();
-		urlencoded.append("email", registeredEmail);
-		urlencoded.append("otp", otp);
-
-		dispatch(verifyOtp(urlencoded)).then((data) => {
+		dispatch(verifyOtp({ email: formData?.email, otp })).then((data) => {
 			if (data.payload?.success) {
 				toast.success(data.payload?.message);
 				setIsSubmitting(false);
+				setFormData({ username: "", email: "", password: "" });
 				navigate("/auth/login");
 			} else {
 				toast.error(data.payload?.message);
@@ -93,6 +109,8 @@ const Register = () => {
 								placeholder="Enter your user name"
 								required
 								className="rounded-full text-black"
+								onChange={handleChange}
+								value={formData?.username}
 							/>
 						</div>
 						<div className="space-y-1">
@@ -104,6 +122,8 @@ const Register = () => {
 								placeholder="Enter your email"
 								required
 								className="rounded-full text-black"
+								onChange={handleChange}
+								value={formData?.email}
 							/>
 						</div>
 						<div className="space-y-1">
@@ -115,6 +135,8 @@ const Register = () => {
 								placeholder="Enter your password"
 								required
 								className="rounded-full text-black"
+								onChange={handleChange}
+								value={formData?.password}
 							/>
 						</div>
 						<Button
@@ -143,45 +165,51 @@ const Register = () => {
 					<div className="text-center">
 						<h1 className="text-3xl font-bold tracking-tight">Verify OTP</h1>
 						<p className="mt-2">
-							We've sent a verification code to <br /> {registeredEmail}
+							We've sent a verification code to <br /> {formData?.email}
 						</p>
 					</div>
-					<form onSubmit={handleOtpSubmit} className="space-y-3">
-						<div className="space-y-1">
-							<Label htmlFor="otp">Verification Code</Label>
-							<Input
-								id="otp"
-								type="text"
-								name="otp"
-								placeholder="Enter 6-digit OTP"
-								required
-								className="rounded-full text-black"
-								maxLength="6"
-							/>
+					<div className="space-y-3">
+						<form onSubmit={handleOtpSubmit} className="space-y-3">
+							<div className="space-y-2">
+								<Label htmlFor="otp">Verification Code</Label>
+
+								<Input
+									id="otp"
+									type="text"
+									name="otp"
+									placeholder="Enter 6-digit OTP"
+									required
+									className={`rounded-full text-black ${otpError ? "focus-visible:ring-red-500" : ""}`}
+									maxLength="6"
+									onChange={handleOtpChange}
+									value={otp}
+								/>
+							</div>
+							<div>
+								{otpError && <p className="text-red-500">{otpError}</p>}
+							</div>
+							<Button
+								type="submit"
+								disabled={isSubmitting}
+								className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
+							>
+								{isSubmitting ? (
+									<div className="flex items-center gap-2">
+										<Loader className="size-4 animate-spin" />
+										<span>Verifying</span>
+									</div>
+								) : (
+									"Verify OTP"
+								)}
+							</Button>
+						</form>
+
+						<div className="text-center">
+							<p className="text-xs">
+								Note: don't refresh the page otherwise OTP will be expired
+							</p>
 						</div>
-						<Button
-							disabled={isSubmitting}
-							className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
-						>
-							{isSubmitting ? (
-								<div className="flex items-center gap-2">
-									<Loader className="size-4 animate-spin" />{" "}
-									<span>Verifying</span>
-								</div>
-							) : (
-								"Verify OTP"
-							)}
-						</Button>
-						<Button
-							type="button"
-							variant="outline"
-							disabled={isSubmitting}
-							className="w-full rounded-full text-black"
-							onClick={() => setShowOtpForm(false)}
-						>
-							Back to Registration
-						</Button>
-					</form>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -4,34 +4,31 @@ import { Label } from "@/components/ui/label";
 import { loginUser } from "@/store/authSlice";
 import { Loader } from "lucide-react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
 const Login = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const { isLoading } = useSelector((state) => state.auth);
+	const [formData, setFormData] = useState({ email: "", password: "" });
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData({ ...formData, [name]: value });
+	};
 	const handleSubmit = (event) => {
 		event.preventDefault();
+
+		if (formData.email === "" || formData.password === "") {
+			toast.error("Please fill all the fields");
+			return;
+		}
+
 		setIsSubmitting(true);
-		const formData = new FormData(event.target);
-		const { email, password } = Object.fromEntries(formData);
-
-		if (!(email && password)) {
-			return;
-		}
-
-		const urlencodedData = new URLSearchParams();
-		urlencodedData.append("email", email);
-		urlencodedData.append("password", password);
-
-		if (!urlencodedData) {
-			return;
-		}
-		dispatch(loginUser(urlencodedData)).then((data) => {
+		dispatch(loginUser(formData)).then((data) => {
 			if (data.payload?.success) {
 				setIsSubmitting(false);
 				navigate("/");
@@ -69,6 +66,8 @@ const Login = () => {
 						placeholder="Enter your email"
 						autoComplete="email"
 						className="rounded-full text-black"
+						onChange={handleChange}
+						value={formData?.email}
 					/>
 				</div>
 				<div className="space-y-1">
@@ -80,6 +79,8 @@ const Login = () => {
 						placeholder="Enter your password"
 						autoComplete="current-password"
 						className="rounded-full text-black"
+						onChange={handleChange}
+						value={formData?.password}
 					/>
 				</div>
 				<Button

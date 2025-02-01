@@ -78,6 +78,7 @@ export const refreshToken = createAsyncThunk("auth/refreshToken", async () => {
 		return error.response.data;
 	}
 });
+
 export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
 	try {
 		const res = await axios.get(
@@ -101,6 +102,22 @@ export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
 	}
 });
 
+export const verifyOtp = createAsyncThunk(
+	"auth/verifyOtp",
+	async (formData) => {
+		try {
+			const res = await axios.post(
+				import.meta.env.VITE_SERVER_URL + "/auth/verify-otp",
+				formData,
+			);
+			const result = res.data;
+			return result;
+		} catch (error) {
+			return error.response.data;
+		}
+	},
+);
+
 export const authSlice = createSlice({
 	name: "auth",
 	initialState,
@@ -110,7 +127,7 @@ export const authSlice = createSlice({
 			.addCase(registerUser.pending, (state) => {
 				state.isLoading = false;
 			})
-			.addCase(registerUser.fulfilled, (state, action) => {
+			.addCase(registerUser.fulfilled, (state) => {
 				state.isLoading = false;
 				state.currentUser = null;
 				state.isAuthenticated = false;

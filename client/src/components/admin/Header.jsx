@@ -20,15 +20,14 @@ const Header = ({ setOpen }) => {
 				<span className="sr-only">Toggle Menu</span>
 			</button>
 
-			<div className="flex flex-1 justify-end pr-3">
+			<div className="flex flex-1 justify-end">
 				<Button
 					variant="destructive"
 					size="sm"
 					className="gap-2 rounded-full text-sm"
 					onClick={handleLogout}
 				>
-					{" "}
-					<LogOut className="size-4" /> Logout
+					<LogOut className="size-4" /> <span>Logout</span>
 				</Button>
 			</div>
 		</header>

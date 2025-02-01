@@ -82,7 +82,6 @@ export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
 	try {
 		const res = await axios.get(
 			import.meta.env.VITE_SERVER_URL + "/auth/check-auth",
-
 			{
 				withCredentials: true,
 				headers: {
@@ -113,7 +112,7 @@ export const authSlice = createSlice({
 	extraReducers: (builder) => {
 		builder
 			.addCase(registerUser.pending, (state) => {
-				state.isLoading = false;
+				state.isLoading = true;
 			})
 			.addCase(registerUser.fulfilled, (state, action) => {
 				state.isLoading = false;

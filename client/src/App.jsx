@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Routes } from "react-router";
+import { Route, Routes, useLocation } from "react-router";
 import AdminLayout from "./components/admin/Layout";
 import AuthLayout from "./components/auth/layout";
 import CheckAuth from "./components/check-auth/CheckAuth";
@@ -22,14 +22,20 @@ import { checkAuth } from "./store/authSlice";
 
 const App = () => {
 	const { isLoading } = useSelector((state) => state.auth);
-
+	const location = useLocation();
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(checkAuth());
 	}, [dispatch]);
 
-	if (isLoading) {
+	if (
+		isLoading &&
+		!(
+			location.pathname === "/auth/login" ||
+			location.pathname === "/auth/register"
+		)
+	) {
 		return <Loader />;
 	}
 

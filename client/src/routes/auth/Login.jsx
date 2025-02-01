@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/store/authSlice";
+import { Loader } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -81,9 +82,16 @@ const Login = () => {
 				<Button
 					type="submit"
 					disable={isLoading.toString()}
-					className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90"
+					className="w-full rounded-full bg-blue-500 duration-300 hover:bg-blue-500/90 disabled:cursor-not-allowed disabled:bg-gray-400"
 				>
-					Sign in
+					{isLoading ? (
+						<div className="flex items-center gap-2">
+							{" "}
+							<Loader className="size-4 animate-spin" /> <span>Signing in</span>
+						</div>
+					) : (
+						"Sign in"
+					)}
 				</Button>
 			</form>
 		</div>

@@ -85,10 +85,6 @@ export const checkAuth = createAsyncThunk("auth/checkauth", async () => {
 			import.meta.env.VITE_SERVER_URL + "/auth/check-auth",
 			{
 				withCredentials: true,
-				headers: {
-					"Cache-Control":
-						"no-cache , no-store, must-revalidate, proxy-revalidate",
-				},
 			},
 		);
 

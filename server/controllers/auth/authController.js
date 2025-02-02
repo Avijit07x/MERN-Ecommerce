@@ -166,6 +166,12 @@ const logoutUser = (req, res) => {
 			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 			path: "/",
 		})
+		.clearCookie("refreshToken", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+			path: "/",
+		})
 		.status(200)
 		.json({ success: true, message: "User Logged Out" });
 };

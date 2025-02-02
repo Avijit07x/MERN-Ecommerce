@@ -168,21 +168,6 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.currentUser = null;
 			})
-			.addCase(refreshToken.pending, (state) => {
-				state.isLoading = true;
-			})
-			.addCase(refreshToken.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.currentUser = action.payload?.success
-					? action.payload?.user
-					: null;
-				state.isAuthenticated = action.payload?.success;
-			})
-			.addCase(refreshToken.rejected, (state) => {
-				state.isAuthenticated = false;
-				state.isLoading = false;
-				state.currentUser = null;
-			})
 			.addCase(logoutUser.pending, (state) => {
 				state.isLoading = false;
 				state.user = null;

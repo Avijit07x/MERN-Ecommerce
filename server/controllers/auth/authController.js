@@ -1,8 +1,13 @@
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../../models/User");
 const { default: sendOTPEmail } = require("../../helpers/Email");
 const generateOTP = require("../../helpers/GenerateOTP");
+const {
+	generateAccessToken,
+	generateRefreshToken,
+	accessTokenOptions,
+	refreshTokenOptions,
+} = require("../../helpers/JwtGenerate");
 
 // register
 const registerUser = async (req, res) => {
@@ -128,31 +133,18 @@ const loginUser = async (req, res) => {
 			username: existingUser.username,
 		};
 		// create access token
-		const accessToken = jwt.sign(
-			{
-				user,
-			},
-			process.env.TOKEN_KEY,
-			{
-				expiresIn: process.env.TOKEN_KEY_EXPIRY,
-			}
-		);
+		const accessToken = generateAccessToken(user);
+		const refreshToken = generateRefreshToken(existingUser._id);
 
 		// update refresh token
-		existingUser.accessToken = accessToken;
+		existingUser.refreshToken = refreshToken;
 		await existingUser.save();
-
-		// Cookie options
-		const accessTokenOptions = {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-		};
 
 		// Set cookie and return response
 		return res
 			.status(200)
 			.cookie("accessToken", accessToken, accessTokenOptions)
+			.cookie("refreshToken", refreshToken, refreshTokenOptions)
 			.json({
 				success: true,
 				user,
@@ -178,53 +170,9 @@ const logoutUser = (req, res) => {
 		.json({ success: true, message: "User Logged Out" });
 };
 
-// Middleware
-const authMiddleware = async (req, res, next) => {
-	const token = req.cookies.accessToken;
-
-	if (!token) {
-		return res
-			.status(401)
-			.json({ success: false, message: "Unauthenticated: No token" });
-	}
-	try {
-		const decoded = jwt.verify(token, process.env.TOKEN_KEY);
-
-		if (!decoded) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Unauthenticated: Invalid token" });
-		}
-
-		const user = await User.findById(decoded.user.id);
-
-		if (token !== user.accessToken) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Unauthenticated: Invalid token" });
-		}
-
-		if (!user) {
-			return res
-				.status(401)
-				.json({ success: false, message: "Unauthenticated: Invalid user" });
-		}
-
-		req.user = decoded.user;
-
-		next();
-	} catch (error) {
-		if (error.name === "TokenExpiredError") {
-			return res.status(403).json({ success: false, message: "Token expired" });
-		}
-		return res.status(401).json({ success: false, message: "Unauthenticated" });
-	}
-};
-
 module.exports = {
 	registerUser,
 	loginUser,
 	logoutUser,
-	authMiddleware,
 	verifyOtp,
 };

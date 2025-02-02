@@ -3,7 +3,6 @@ const {
 	registerUser,
 	loginUser,
 	logoutUser,
-	authMiddleware,
 	verifyOtp,
 } = require("../../controllers/auth/authController");
 const {
@@ -11,6 +10,7 @@ const {
 	registerLimiter,
 	loginLimiter,
 } = require("../../helpers/AuthLimit");
+const authMiddleware = require("../../middlewares/authMiddleware");
 
 const router = express.Router();
 

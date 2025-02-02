@@ -1,10 +1,8 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../../models/User");
-const nodemailer = require("nodemailer");
 const { default: sendOTPEmail } = require("../../helpers/Email");
-// OTP Generate
-const generateOTP = () => Math.floor(100000 + Math.random() * 900000);
+const generateOTP = require("../../helpers/GenerateOTP");
 
 // register
 const registerUser = async (req, res) => {
@@ -79,14 +77,13 @@ const verifyOtp = async (req, res) => {
 			return res.json({ success: false, message: "User already verified" });
 		}
 		if (otp.toString() !== user.otp.toString()) {
-			console.log(otp, user.otp);
 			return res.json({ success: false, message: "Invalid OTP" });
 		}
 
 		if (user.otpExpires < Date.now()) {
 			return res.json({ success: false, message: "OTP expired" });
 		}
-		
+
 		user.isVerified = true;
 		user.otp = null;
 		user.otpExpires = null;
@@ -200,6 +197,12 @@ const authMiddleware = async (req, res, next) => {
 		}
 
 		const user = await User.findById(decoded.user.id);
+
+		if (token !== user.accessToken) {
+			return res
+				.status(401)
+				.json({ success: false, message: "Unauthenticated: Invalid token" });
+		}
 
 		if (!user) {
 			return res

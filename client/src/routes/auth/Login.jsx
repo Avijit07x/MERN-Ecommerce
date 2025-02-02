@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/store/authSlice";
-import { Loader } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 const Login = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [formData, setFormData] = useState({ email: "", password: "" });
+	const [showPassword, setShowPassword] = useState(false);
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -72,16 +73,31 @@ const Login = () => {
 				</div>
 				<div className="space-y-1">
 					<Label htmlFor="password">Password</Label>
-					<Input
-						id="password"
-						type="password"
-						name="password"
-						placeholder="Enter your password"
-						autoComplete="current-password"
-						className="rounded-full text-black"
-						onChange={handleChange}
-						value={formData?.password}
-					/>
+					<div className="relative w-full">
+						<Input
+							id="password"
+							type={showPassword ? "text" : "password"}
+							name="password"
+							placeholder="Enter your password"
+							autoComplete="current-password"
+							className="rounded-full text-black pr-11"
+							onChange={handleChange}
+							value={formData?.password}
+						/>
+						<Button
+							type="button"
+							className="absolute right-2 top-0 text-gray-500 text-opacity-60 hover:bg-transparent hover:text-gray-500 hover:text-opacity-60"
+							variant="ghost"
+							onClick={() => setShowPassword(!showPassword)}
+							size="icon"
+						>
+							{showPassword ? (
+								<Eye className="size-4" />
+							) : (
+								<EyeOff className="size-4" />
+							)}
+						</Button>
+					</div>
 				</div>
 				<Button
 					type="submit"

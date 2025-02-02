@@ -175,11 +175,11 @@ const Register = () => {
 
 								<Input
 									id="otp"
-									type="text"
+									type="number"
 									name="otp"
 									placeholder="Enter 6-digit OTP"
 									required
-									className={`rounded-full text-black ${otpError ? "focus-visible:ring-red-500" : ""}`}
+									className={`rounded-full text-black [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none ${otpError ? "focus-visible:ring-red-500" : ""}`}
 									maxLength="6"
 									onChange={handleOtpChange}
 									value={otp}

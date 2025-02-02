@@ -62,6 +62,7 @@ const AdminProducts = () => {
 		setSearchedText(e.target.value);
 	};
 
+	// filter products
 	const searchedProducts = useMemo(() => {
 		if (searchedText === "") {
 			return products;
@@ -74,6 +75,23 @@ const AdminProducts = () => {
 		}
 		return filteredProducts;
 	}, [products, searchedText]);
+
+	// open create product dialog
+	const handleOpenCreateProductsDialog = () => {
+		setOpenCreateProductsDialog(true);
+		setCurrentEditedId(null);
+		setFormData({
+			title: "",
+			description: "",
+			category: "",
+			brand: "",
+			price: "",
+			salePrice: "",
+			totalStock: "",
+		});
+		setUploadedImageUrl("");
+		setImageFile(null);
+	};
 
 	return (
 		<>
@@ -92,7 +110,7 @@ const AdminProducts = () => {
 				<Button
 					size="sm"
 					className="rounded-full bg-blue-600 text-sm hover:bg-blue-600/90"
-					onClick={() => setOpenCreateProductsDialog(true)}
+					onClick={handleOpenCreateProductsDialog}
 				>
 					Add Product
 				</Button>

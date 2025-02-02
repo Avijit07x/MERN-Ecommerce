@@ -6,12 +6,16 @@ const {
 	authMiddleware,
 	verifyOtp,
 } = require("../../controllers/auth/authController");
-const otpLimiter = require("../../helpers/OtpLimit");
+const {
+	otpLimiter,
+	registerLimiter,
+	loginLimiter,
+} = require("../../helpers/AuthLimit");
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/register", registerLimiter, registerUser);
+router.post("/login", loginLimiter, loginUser);
 router.post("/logout", logoutUser);
 router.post("/verify-otp", otpLimiter, verifyOtp);
 router.get("/check-auth", authMiddleware, (req, res) => {

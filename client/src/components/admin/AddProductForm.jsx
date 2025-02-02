@@ -43,13 +43,13 @@ const AddProductForm = ({
 		e.preventDefault();
 		const data = { image: { ...uploadedImageUrl }, ...formData };
 		if (
-			!data.image.url ||
-			!data.title ||
-			!data.description ||
-			!data.category ||
-			!data.brand ||
-			!data.price ||
-			!data.salePrice ||
+			!data.image.url &&
+			!data.title &&
+			!data.description &&
+			!data.category &&
+			!data.brand &&
+			!data.price &&
+			!data.salePrice &&
 			!data.totalStock
 		) {
 			toast.error("Please fill all the fields");
@@ -176,7 +176,7 @@ const AddProductForm = ({
 						name="price"
 						type="number"
 						placeholder="Enter product price"
-						className="w-full"
+						className="w-full [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 						min="0"
 						value={formData.price}
 						onChange={handleChange}
@@ -192,7 +192,7 @@ const AddProductForm = ({
 						type="number"
 						min="0"
 						placeholder="Enter Sale price (optional)"
-						className="w-full"
+						className="w-full [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 						value={formData.salePrice}
 						onChange={handleChange}
 					/>
@@ -205,14 +205,17 @@ const AddProductForm = ({
 						type="number"
 						min="0"
 						placeholder="Enter Stock"
-						className="w-full"
+						className="w-full [-moz-appearance:_textfield] focus:z-10 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 						value={formData.totalStock}
 						onChange={handleChange}
 					/>
 				</div>
 
 				<div>
-					<Button type="submit" className="mt-2 w-full bg-blue-600 hover:bg-blue-600/90">
+					<Button
+						type="submit"
+						className="mt-2 w-full bg-blue-600 hover:bg-blue-600/90"
+					>
 						{currentEditedId ? "Update Product" : "Add Product"}
 					</Button>
 				</div>

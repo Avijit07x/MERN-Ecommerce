@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 
@@ -54,4 +55,4 @@ const ProductTile = ({
 	);
 };
 
-export default ProductTile;
+export default memo(ProductTile);

@@ -7,9 +7,13 @@ const authRoute = require("./routes/auth/authRoute");
 const productRoute = require("./routes/admin/ProductRoute");
 const helmet = require("helmet");
 const limiter = require("./helpers/RateLimit");
+const compression = require("compression");
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// Helmet Security
+app.use(helmet());
 
 // Cors
 app.use(
@@ -27,11 +31,10 @@ app.use(
 	})
 );
 
-app.use(helmet());
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
+app.use(compression());
 
 // DB Connection
 connectToDB();

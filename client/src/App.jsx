@@ -26,8 +26,7 @@ const App = () => {
 	const token = localStorage.getItem("token");
 
 	useEffect(() => {
-		console.log(token);
-		if (!token) {
+		if (token === "false" || !token) {
 			dispatch(setLoading(false));
 		} else {
 			dispatch(checkAuth());

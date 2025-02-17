@@ -119,7 +119,6 @@ export const authSlice = createSlice({
 	initialState,
 	reducers: {
 		setLoading: (state, action) => {
-			console.log(action.payload);
 			state.isLoading = action.payload;
 		},
 	},

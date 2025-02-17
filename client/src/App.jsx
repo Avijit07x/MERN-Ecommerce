@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router";
 import AdminLayout from "./components/admin/Layout";
@@ -23,13 +22,12 @@ import { checkAuth, setLoading } from "./store/authSlice";
 
 const App = () => {
 	const { isLoading } = useSelector((state) => state.auth);
-	const [cookies] = useCookies(["accessToken"], {
-		doNotParse: true,
-	});
 	const dispatch = useDispatch();
+	const token = localStorage.getItem("token");
 
 	useEffect(() => {
-		if (!cookies.accessToken) {
+		console.log(token);
+		if (!token) {
 			dispatch(setLoading(false));
 		} else {
 			dispatch(checkAuth());

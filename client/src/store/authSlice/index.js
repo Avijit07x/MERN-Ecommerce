@@ -148,6 +148,7 @@ export const authSlice = createSlice({
 					? action.payload?.user
 					: null;
 				state.isAuthenticated = action.payload?.success;
+				localStorage.setItem("token", action.payload?.success);
 			})
 			.addCase(loginUser.rejected, (state) => {
 				state.isAuthenticated = false;
@@ -175,6 +176,7 @@ export const authSlice = createSlice({
 				state.isAuthenticated = false;
 			})
 			.addCase(logoutUser.fulfilled, (state) => {
+				localStorage.setItem("token", false);
 				state.isLoading = false;
 				state.user = null;
 				state.isAuthenticated = false;

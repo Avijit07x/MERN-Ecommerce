@@ -3,7 +3,7 @@ import axios from "axios";
 
 const initialState = {
 	isAuthenticated: false,
-	isLoading: true,
+	isLoading: false,
 	currentUser: null,
 };
 
@@ -117,7 +117,12 @@ export const verifyOtp = createAsyncThunk(
 export const authSlice = createSlice({
 	name: "auth",
 	initialState,
-	reducers: {},
+	reducers: {
+		setLoading: (state, action) => {
+			console.log(action.payload);
+			state.isLoading = action.payload;
+		},
+	},
 	extraReducers: (builder) => {
 		builder
 			.addCase(registerUser.pending, (state) => {
@@ -177,4 +182,5 @@ export const authSlice = createSlice({
 	},
 });
 
+export const { setLoading } = authSlice.actions;
 export default authSlice.reducer;

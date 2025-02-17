@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useCookies } from "react-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes } from "react-router";
 import AdminLayout from "./components/admin/Layout";
@@ -18,14 +19,21 @@ import ShoppingCheckout from "./routes/shopping/Checkout";
 import SHoppingHome from "./routes/shopping/Home";
 import ShoppingListing from "./routes/shopping/Listing";
 import UnAuth from "./routes/unauth/UnAuth";
-import { checkAuth } from "./store/authSlice";
+import { checkAuth, setLoading } from "./store/authSlice";
 
 const App = () => {
 	const { isLoading } = useSelector((state) => state.auth);
+	const [cookies] = useCookies(["accessToken"], {
+		doNotParse: true,
+	});
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(checkAuth());
+		if (!cookies.accessToken) {
+			dispatch(setLoading(false));
+		} else {
+			dispatch(checkAuth());
+		}
 	}, [dispatch]);
 
 	if (isLoading) {

@@ -104,11 +104,13 @@ const updateProduct = async (req, res) => {
 				.status(400)
 				.json({ success: false, message: "Product not found" });
 		}
-		if (image?.url && updatedImage?.url) {
+
+		// delete old image from cloudinary
+		if (image?.url && updatedImage?.url) {			
 			await ImageDeleteUtil(image.public_id);
 		}
 
-		findProduct.image = updatedImage?.url ? updatedImage : findProduct.image;
+		findProduct.image = updatedImage || findProduct.image;
 		findProduct.title = title || findProduct.title;
 		findProduct.description = description || findProduct.description;
 		findProduct.category = category || findProduct.category;

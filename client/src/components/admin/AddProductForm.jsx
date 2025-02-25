@@ -43,16 +43,21 @@ const AddProductForm = ({
 		e.preventDefault();
 		const data = { image: { ...uploadedImageUrl }, ...formData };
 		if (
-			!data.image.url &&
-			!data.title &&
-			!data.description &&
-			!data.category &&
-			!data.brand &&
-			!data.price &&
-			!data.salePrice &&
+			!data.image.url ||
+			!data.title ||
+			!data.description ||
+			!data.category ||
+			!data.brand ||
+			!data.price ||
+			!data.salePrice ||
 			!data.totalStock
 		) {
 			toast.error("Please fill all the fields");
+			return;
+		}
+
+		if (data.price < data.salePrice) {
+			toast.error("Sale price should be less than the regular price");
 			return;
 		}
 

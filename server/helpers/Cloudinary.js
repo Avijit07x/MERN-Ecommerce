@@ -23,7 +23,6 @@ const ImageUploadUtil = async (image) => {
 // delete image
 const ImageDeleteUtil = async (imgId) => {
 	const result = await cloudinary.uploader.destroy(imgId);
-
 	return result;
 };
 

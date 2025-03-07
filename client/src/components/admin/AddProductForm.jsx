@@ -56,7 +56,7 @@ const AddProductForm = ({
 			return;
 		}
 
-		if (data.price < data.salePrice) {
+		if (data.price > data.salePrice) {
 			toast.error("Sale price should be less than the regular price");
 			return;
 		}

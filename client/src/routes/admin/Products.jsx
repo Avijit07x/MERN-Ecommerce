@@ -11,7 +11,7 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { deleteProduct, getProducts } from "@/store/admin/productSlice";
-import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 
@@ -58,9 +58,9 @@ const AdminProducts = () => {
 	};
 
 	// search product
-	const handleSearchProduct = useCallback((e) => {
+	const handleSearchProduct = (e) => {
 		setSearchedText(e.target.value);
-	});
+	};
 
 	// filter products
 	const searchedProducts = useMemo(() => {

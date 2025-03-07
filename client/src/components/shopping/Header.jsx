@@ -1,6 +1,7 @@
 import { shoppingViewHeaderMenuItems } from "@/config/config";
 import { logoutUser } from "@/store/authSlice";
 import { Menu, ShoppingCart } from "lucide-react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
 import { Badge } from "../ui/badge";
@@ -43,11 +44,11 @@ const ShoppingHeader = () => {
 	const { isAuthenticated } = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
 
-	function handleLogout(e) {
+	const handleLogout = useCallback((e) => {
 		e.preventDefault();
 		dispatch(logoutUser());
-	}
-	
+	}, []);
+
 	return (
 		<header className="sticky top-0 z-40 w-full select-none border-b bg-background">
 			<div className="flex h-16 items-center justify-between px-4 md:px-6">
@@ -85,7 +86,7 @@ const ShoppingHeader = () => {
 							className="relative size-9"
 						>
 							<ShoppingCart className="size-5 opacity-80" />
-							<Badge className="absolute -top-3 bg-blue-500 left-full flex min-w-5 -translate-x-1/2 items-center justify-center px-1 text-xs">
+							<Badge className="absolute -top-3 left-full flex min-w-5 -translate-x-1/2 items-center justify-center bg-blue-500 px-1 text-xs">
 								99+
 							</Badge>
 						</Button>

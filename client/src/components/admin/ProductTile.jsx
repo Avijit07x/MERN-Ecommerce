@@ -43,10 +43,16 @@ const ProductTile = ({
 							setCurrentEditedId(product?._id);
 							setFormData(product);
 						}}
+						className="rounded-full bg-blue-500 px-3 py-0.5 text-sm text-white"
 					>
 						Edit
 					</Button>
-					<Button size="sm" onClick={() => handleDelete(product?._id)}>
+					<Button
+						size="sm"
+						variant="destructive"
+						className="rounded-full bg-red-500 px-3 py-0.5 text-sm text-white"
+						onClick={() => handleDelete(product?._id)}
+					>
 						Delete
 					</Button>
 				</CardFooter>

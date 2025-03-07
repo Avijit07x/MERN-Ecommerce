@@ -43,7 +43,6 @@ app.get("/", (req, res) => {
 });
 
 // CRON JOB: Runs every night at 12 AM
-
 cron.schedule("0 0 * * *", async () => {
 	console.log("Cron job is running");
 	await getProducts();

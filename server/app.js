@@ -10,9 +10,21 @@ const limiter = require("./helpers/RateLimit");
 const compression = require("compression");
 const cron = require("node-cron");
 const { getProducts } = require("./controllers/admin/ProductController");
+const morgan = require("morgan");
+const fs = require("fs");
+const path = require("path");
+
+
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+const logStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
+	flags: "a", 
+});
+
+// Logger
+app.use(morgan("combined", { stream: logStream }));
 
 // Helmet Security
 app.use(helmet());

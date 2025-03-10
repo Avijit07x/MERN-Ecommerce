@@ -2,7 +2,6 @@ const {
 	ImageUploadUtil,
 	ImageDeleteUtil,
 } = require("../../helpers/Cloudinary");
-const { valkey } = require("../../helpers/Redis");
 const Product = require("../../models/Product");
 
 // upload image to cloudinary
@@ -44,7 +43,7 @@ const addProduct = async (req, res) => {
 		const newProduct = new Product(data);
 		await newProduct.save();
 		// delete products from cache
-		valkey.del("products");
+		// valkey.del("products");
 		res.status(200).json({ success: true, message: "Product added" });
 	} catch (error) {
 		res.status(500).json({ success: false, message: "Something went wrong" });
@@ -55,21 +54,21 @@ const addProduct = async (req, res) => {
 
 const getProducts = async (req, res) => {
 	try {
-		const cachedProducts = await valkey.get("products");
-		// check if products are cached
-		if (cachedProducts) {
-			return res.status(200).json({
-				success: true,
-				message: "Products fetched from cache",
-				products: JSON.parse(cachedProducts),
-			});
-		}
+		// const cachedProducts = await valkey.get("products");
+		// // check if products are cached
+		// if (cachedProducts) {
+		// 	return res.status(200).json({
+		// 		success: true,
+		// 		message: "Products fetched from cache",
+		// 		products: JSON.parse(cachedProducts),
+		// 	});
+		// }
 
 		// if not, fetch from database
 		const productsFromDB = await Product.find({});
 
-		// set products to cache
-		valkey.set("products", JSON.stringify(productsFromDB));
+		// // set products to cache
+		// valkey.set("products", JSON.stringify(productsFromDB));
 
 		return res.status(200).json({ success: true, products: productsFromDB });
 	} catch (err) {
@@ -106,7 +105,7 @@ const updateProduct = async (req, res) => {
 		}
 
 		// delete old image from cloudinary
-		if (image?.url && updatedImage?.url) {			
+		if (image?.url && updatedImage?.url) {
 			await ImageDeleteUtil(image.public_id);
 		}
 
@@ -121,7 +120,7 @@ const updateProduct = async (req, res) => {
 
 		await findProduct.save();
 		// delete products from cache
-		valkey.del("products");
+		// valkey.del("products");
 		res.status(200).json({ success: true, message: "Product updated" });
 	} catch (error) {
 		res.status(500).json({ success: false, message: "Something went wrong" });
@@ -152,7 +151,7 @@ const deleteProduct = async (req, res) => {
 		// delete product
 		await Product.findByIdAndDelete(id);
 		// delete products from cache
-		valkey.del("products");
+		// valkey.del("products");
 		res.status(200).json({ success: true, message: "Product deleted" });
 	} catch (error) {
 		res.status(500).json({ success: false, message: "Something went wrong" });

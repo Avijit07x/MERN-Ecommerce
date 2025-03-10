@@ -24,7 +24,7 @@ const logStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
 });
 
 // Logger
-app.use(morgan("combined", { stream: logStream }));
+app.use(morgan("dev", { stream: logStream }));
 
 // Helmet Security
 app.use(helmet());

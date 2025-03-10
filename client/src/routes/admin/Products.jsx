@@ -80,17 +80,19 @@ const AdminProducts = () => {
 	const handleOpenCreateProductsDialog = () => {
 		setOpenCreateProductsDialog(true);
 		setCurrentEditedId(null);
-		setFormData({
-			title: "",
-			description: "",
-			category: "",
-			brand: "",
-			price: "",
-			salePrice: "",
-			totalStock: "",
-		});
-		setUploadedImageUrl("");
-		setImageFile(null);
+		if (currentEditedId !== null) {
+			setFormData({
+				title: "",
+				description: "",
+				category: "",
+				brand: "",
+				price: "",
+				salePrice: "",
+				totalStock: "",
+			});
+			setUploadedImageUrl("");
+			setImageFile(null);
+		}
 	};
 
 	return (

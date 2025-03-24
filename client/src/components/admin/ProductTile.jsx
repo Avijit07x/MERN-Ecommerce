@@ -17,6 +17,7 @@ const ProductTile = ({
 						src={product?.image.url}
 						alt={product?.title}
 						className="absolute h-full w-full transform rounded-t-lg object-cover transition-transform duration-300 lg:hover:scale-110 lg:hover:cursor-pointer"
+						loading="lazy"
 					/>
 				</div>
 
@@ -35,6 +36,7 @@ const ProductTile = ({
 						) : null}
 					</div>
 				</CardContent>
+				
 				<CardFooter className="flex items-center justify-between p-5 pt-0">
 					<Button
 						size="sm"

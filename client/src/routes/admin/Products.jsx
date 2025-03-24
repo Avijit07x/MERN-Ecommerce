@@ -32,11 +32,12 @@ const AdminProducts = () => {
 	});
 	const [searchedText, setSearchedText] = useState("");
 	const { products, isLoading } = useSelector((state) => state.adminProduct);
+
 	const dispatch = useDispatch();
 
 	// get all products
 	useEffect(() => {
-		if (products.length === 0) {
+		if (products.length === 0 && !isLoading) {
 			dispatch(getProducts());
 		}
 	}, [dispatch, products]);

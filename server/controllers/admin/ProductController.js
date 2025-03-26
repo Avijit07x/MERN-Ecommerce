@@ -158,6 +158,23 @@ const deleteProduct = async (req, res) => {
 	}
 };
 
+const searchProducts = async (req, res) => {
+	try {
+		const { search } = req.query;
+		const products = await Product.find({
+			$or: [
+				{ title: { $regex: search, $options: "i" } },
+				{ description: { $regex: search, $options: "i" } },
+				{ category: { $regex: search, $options: "i" } },
+				{ brand: { $regex: search, $options: "i" } },
+			],
+		});
+		res.status(200).json({ success: true, products });
+	} catch (error) {
+		res.status(500).json({ success: false, message: "Something went wrong" });
+	}
+};
+
 module.exports = {
 	handleImageUpload,
 	handleImageDelete,
@@ -165,4 +182,5 @@ module.exports = {
 	getProducts,
 	updateProduct,
 	deleteProduct,
+	searchProducts,
 };

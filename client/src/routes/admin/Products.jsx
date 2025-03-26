@@ -11,9 +11,11 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { deleteProduct, getProducts } from "@/store/admin/productSlice";
-import { memo, useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import { useDebounce } from "use-debounce";
 
 const AdminProducts = () => {
 	const [openCreateProductsDialog, setOpenCreateProductsDialog] =
@@ -31,7 +33,9 @@ const AdminProducts = () => {
 		totalStock: "",
 	});
 	const [searchedText, setSearchedText] = useState("");
+	const [searchValue] = useDebounce(searchedText, 500);
 	const { products, isLoading } = useSelector((state) => state.adminProduct);
+	const [searchedProducts, setSearchedProducts] = useState([]);
 
 	const dispatch = useDispatch();
 
@@ -63,19 +67,27 @@ const AdminProducts = () => {
 		setSearchedText(e.target.value);
 	};
 
-	// filter products
-	const searchedProducts = useMemo(() => {
+	// search products
+	useEffect(() => {
 		if (searchedText === "") {
-			return products;
+			setSearchedProducts(products);
+		} else {
+			const fetchSearchedProducts = async () => {
+				try {
+					const { data } = await axios.post(
+						`${import.meta.env.VITE_SERVER_URL}/admin/product/search?search=${searchValue}`,
+					);
+					setSearchedProducts(
+						data.products.length > 0 ? data?.products : products,
+					);
+				} catch (error) {
+					setSearchedProducts(products);
+				}
+			};
+
+			fetchSearchedProducts();
 		}
-		const filteredProducts = products.filter((product) =>
-			product?.title.toLowerCase().includes(searchedText.toLowerCase()),
-		);
-		if (filteredProducts.length === 0) {
-			return products;
-		}
-		return filteredProducts;
-	}, [products, searchedText]);
+	}, [searchValue, products]);
 
 	// open create product dialog
 	const handleOpenCreateProductsDialog = () => {
@@ -122,7 +134,7 @@ const AdminProducts = () => {
 				<Loader />
 			) : (
 				<div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-					{searchedProducts?.map((product) => (
+					{searchedProducts.map((product) => (
 						<ProductTile
 							key={product?._id}
 							product={product}

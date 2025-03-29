@@ -152,7 +152,6 @@ export const authSlice = createSlice({
 				state.isAuthenticated = false;
 				state.isLoading = false;
 				state.currentUser = null;
-				storage.removeItem("persist:root");
 			})
 			.addCase(checkAuth.pending, (state) => {
 				state.isLoading = true;
@@ -168,7 +167,6 @@ export const authSlice = createSlice({
 				state.isAuthenticated = false;
 				state.isLoading = false;
 				state.currentUser = null;
-				storage.removeItem("persist:root");
 			})
 			.addCase(logoutUser.pending, (state) => {
 				state.isLoading = false;
@@ -180,7 +178,6 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.user = null;
 				state.isAuthenticated = false;
-				storage.removeItem("persist:root");
 			});
 	},
 });

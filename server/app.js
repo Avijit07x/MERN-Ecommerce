@@ -12,7 +12,6 @@ const cron = require("node-cron");
 const { getProducts } = require("./controllers/admin/ProductController");
 const morgan = require("morgan");
 
-
 const app = express();
 const PORT = process.env.PORT || 8000;
 

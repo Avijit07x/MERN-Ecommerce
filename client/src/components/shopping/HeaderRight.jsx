@@ -30,7 +30,7 @@ const HeaderRight = ({ handleLogout }) => {
 						</Avatar>
 					</Button>
 				</DropdownMenuTrigger>
-				<DropdownMenuContent className="max-w-64">
+				<DropdownMenuContent className="max-w-64" sideOffset={10} align="end">
 					<DropdownMenuLabel className="flex min-w-0 flex-col">
 						<span className="truncate text-sm font-medium text-foreground">
 							{currentUser?.username.toUpperCase()}
